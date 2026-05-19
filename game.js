@@ -123,7 +123,7 @@ function useSkill(key, targetIndex) {
   }
   paySkillCost(key);
   COMBAT_SKILLS[key].execute(targetIndex);
-  checkCombatAp();
+  checkAp();
   render();
 }
 //cancel pending skill
@@ -316,7 +316,7 @@ function playerStrike(enemyIndex) {
     return;
   }
   triggerStrike(enemy);
-  checkCombatAp();
+  checkAp();
   render();
 }
 function playerEndTurn() {
