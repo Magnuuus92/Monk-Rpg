@@ -1,0 +1,84 @@
+function getDerivedStats(stats) {
+  return {
+    maxHp: 50 + stats.vitality * 8 + stats.resilience * 3,
+    maxEnergy: 50 + stats.willpower * 8 + stats.intellect * 3,
+  };
+}
+const baseStats = {
+  strength: 5,
+  dexterity: 5,
+  vitality: 5,
+  resilience: 5,
+  willpower: 5,
+  intellect: 5,
+};
+const derived = getDerivedStats(baseStats);
+
+const playerState = {
+  name: "Hero",
+  level: 1,
+  experience: 0,
+  skillPoints: 50,
+  statPoints: 0,
+  stats: { ...baseStats },
+  hp: derived.maxHp,
+  maxHp: derived.maxHp,
+  energy: derived.maxEnergy,
+  maxEnergy: derived.maxEnergy,
+
+  gold: 10,
+  skills: {
+    //force branch
+    a1: false,
+    a2: false,
+    a3: false,
+    a4: false,
+    a5: false,
+    a6: false,
+    a7: false,
+
+    //discipline branc
+    b1: false,
+    b2: false,
+    b3: false,
+    b4: false,
+    b5: false,
+    b6: false,
+    b7: false,
+
+    //spirit branch
+    c1: false,
+    c2: false,
+    c3: false,
+    c4: false,
+    c5: false,
+    c6: false,
+    c7: false,
+
+    // force + dicipline
+    ab1: false,
+    ab2: false,
+    ab3: false,
+
+    //discipline + spirit
+    bc1: false,
+    bc2: false,
+    bc3: false,
+
+    //misc branch
+    r1: false,
+    r2: false,
+    r3: false,
+    r4: false,
+    r5: false,
+    r6: false,
+  },
+
+  day: 1,
+  dayPoints: 5,
+  maxDayPoints: 5,
+  currentArea: null, //This sets area to base.
+  areasConquered: [false, false, false, false],
+
+  combat: null,
+};

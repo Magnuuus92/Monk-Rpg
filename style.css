@@ -1,0 +1,36 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  background-color: rgb(15, 15, 2);
+  color: #e0e0e0;
+  font-family: monospace;
+  font-size: 16px;
+}
+#app {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.skill-grid {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.skill-col {
+  flex: 1;
+  min-width: 160px;
+}
+.skill-node {
+  border: 1px solid #444;
+  padding: 8px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
+.skill-node.unlocked {
+  border-color: #6a6;
+  opacity: 0.7;
+}
