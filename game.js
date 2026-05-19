@@ -84,11 +84,10 @@ function triggerForcefield(target) {
 //Accumulate ENergy (c2, c7 and bc1)
 function triggerAccumulateEnergy() {
   const gain = calcEnergyGain();
-  playerState.energy = Math.min(
-    playerState.maxEnergy,
-    playerState.energy + gain,
-  );
-  combatLog(`Energy accumulated: +${gain}`);
+  ((playerState.combat.accumulatedEnergy += gain),
+    combatLog(
+      `Energy accumulated: +${gain}. (Total Pool: ${playerState.combat.accumulatedEnergy}).`,
+    ));
 }
 //ALERT STANCE
 function triggerAlertStance() {
@@ -158,7 +157,7 @@ function rest() {
 // TRAIN for xp
 function train() {
   if (!spendDP(1)) return;
-  const xpGain = 30;
+  const xpGain = 300;
   playerState.experience += xpGain;
   log(`You sharpen your skills. Gained ${xpGain} Experience.`);
   checkLevelUp();
@@ -261,6 +260,7 @@ function startCombat(areaIndex) {
     flatDmgBonus: 0,
     timeDabbleUses: 0,
     pendingSkill: null,
+    accumulatedEnergy: 0,
     log: [`Combat begins. Turn 1.`],
   };
   render();
@@ -418,7 +418,7 @@ function startNextPlayerTurn() {
     combatLog(`The elements inspire you.. +${block}Block.`);
   }
   //passive energy gain
-  const energyGain = calcEnergyGain();
+  const energyGain = calcEnergyGain() + combat.accumulatedEnergy;
   p.energy = Math.min(p.maxEnergy, p.energy + energyGain);
   combatLog(
     `Turn: ${combat.turn}. You gain ${energyGain} Energy. Block: ${combat.block}.`,
@@ -479,6 +479,7 @@ function fightTestDummy() {
     flatDmgBonus: 0,
     timeDabbleUses: 0,
     pendingSkill: null,
+    accumulatedEnergy: 0,
     log: [`testing turn 1`],
   };
   render();
