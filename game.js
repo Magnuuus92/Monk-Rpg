@@ -321,6 +321,7 @@ function playerStrike(enemyIndex) {
 }
 function playerEndTurn() {
   combatLog("Ending player turn.");
+  checkEnemiesDead();
   enemyTurn();
 }
 
