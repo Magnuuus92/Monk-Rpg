@@ -210,7 +210,7 @@ function checkLevelUp() {
   const xpNeeded = playerState.level * 100;
   if (playerState.experience >= xpNeeded) {
     playerState.experience -= xpNeeded;
-    playerState.level += 1;
+    playerState.level++;
     playerState.skillPoints += 1;
     playerState.statPoints += 2;
 
@@ -221,7 +221,7 @@ function checkLevelUp() {
     playerState.energy = d.maxEnergy;
 
     log(
-      `level up! you are now level${playerState.level}. Gained 1 skillpoint and 2 statpoints.`,
+      `level up! you are now level ${playerState.level}. Gained 1 skillpoint and 2 statpoints.`,
     );
   }
 }
