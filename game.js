@@ -205,30 +205,24 @@ function getNextAreaIndex() {
   return playerState.areasConquered.indexOf(false);
 }
 
+// CHECK LVLUP
 function checkLevelUp() {
-  const lvlVal = 0;
-  const xpNeeded = playerState.level * 100;
-  forEach(playerState.experience >= xpNeeded);
-  {
-    playerState.experience - xpNeeded;
-    return lvlVal++;
-  }
-  forEach(lvlVal > 0);
-  {
+  while (playerState.experience >= playerState.level * 100) {
+    playerState.experience -= playerState.level * 100;
     playerState.level++;
     playerState.skillPoints += 1;
     playerState.statPoints += 2;
-    return;
-  }
-  const d = getDerivedStats(playerState.stats);
-  playerState.maxHp = d.maxHp;
-  playerState.maxEnergy = d.maxEnergy;
-  playerState.hp = d.maxHp;
-  playerState.energy = d.maxEnergy;
 
-  log(
-    `level up! you are now level ${playerState.level}. Gained 1 skillpoint and 2 statpoints.`,
-  );
+    const d = getDerivedStats(playerState.stats);
+    playerState.maxHp = d.maxHp;
+    playerState.maxEnergy = d.maxEnergy;
+    playerState.hp = d.maxHp;
+    playerState.energy = d.maxEnergy;
+
+    log(
+      `level up! you are now level ${playerState.level}. Gained 1 skillpoint and 2 statpoints.`,
+    );
+  }
 }
 //SPEND STATPOINTS
 function spendStatPoint(statName) {
