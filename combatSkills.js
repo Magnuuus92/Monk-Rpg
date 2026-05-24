@@ -4,6 +4,11 @@ function canAffordSkill(key) {
 
   if (combat.actionPoints < skill.apCost) return false;
 
+  //timedabble limit turn use without c6
+  if (key === "c3" && playerState.skills.c6 && combat.timeDabbleUses >= 1) {
+    return false;
+  }
+
   const cost = skill.cost;
   if (cost.type === "energy") {
     //TIMEDABBLE COST SCALING
@@ -40,7 +45,7 @@ function paySkillCost(key) {
   if (cost.type === "hpCurrent") {
     playerState.hp -= Math.floor(playerState.hp * cost.pct);
   }
-}
+} //hereIam
 
 //cost display 4 render
 function getCostDisplay(key) {

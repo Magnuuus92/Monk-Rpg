@@ -212,16 +212,23 @@ const SKILL_DATA = {
     requires: () => playerState.skills.bc1,
   },
   bc3: {
-    // HEREIAM
     name: "Spiritual Awekening",
     description: "(Passive) Gain 100 MaxHP and 100 MaxEnergy.",
     requiresText: "bc1 unlocked.",
     requires: () => playerState.skills.bc1,
+    onUnlock() {
+      playerState.maxHp += 100;
+      playerState.maxEnergy += 100;
+      playerState.hp += 100;
+      playerState.energy += 100;
+      log("Spritual Awakening: +100 MaxHp and +100 MaxEnergy.");
+    },
   },
   //Misc
   r1: {
     name: "Prepared",
-    description: "(Passive)",
+    description:
+      "(Passive) Gain block (RES), energy (WIS/2), and HP (VIT/2) each turn.",
     requiresText: "3 unlocked in each branch (3x a, 3x b and 3x c.).",
     requires: () =>
       countUnlocked("a") >= 3 &&
@@ -238,7 +245,7 @@ const SKILL_DATA = {
   r3: {
     name: "Limit Break",
     description:
-      "(Passive) You can surpass MaxHealth and MaxEnergy in combat. (NOT YET IMPLEMENTED)",
+      "(Passive) You can surpass MaxHealth and MaxEnergy in combat. ",
     requiresText: "5 unlocked in force + 5 in spirit.",
     requires: () => countUnlocked("a") >= 5 && countUnlocked("c") >= 5,
   },
@@ -259,6 +266,9 @@ const SKILL_DATA = {
     description: "(Passive) +1 MaxAp",
     requiresText: "WorldReqPlaceholder.",
     requires: () => false, //placehold
+    onUnlock() {
+      log("Divine Knowledge: +1 MaxAp.");
+    },
   },
 };
 function unlockSkill(key) {
@@ -279,5 +289,8 @@ function unlockSkill(key) {
   playerState.skills[key] = true;
   playerState.skillPoints -= 1;
   log(`Unlocked ${SKILL_DATA[key].name}.`);
+  if (SKILL_DATA[key].onUnlock) {
+    SKILL_DATA[key].onUnlock();
+  }
   render();
 }

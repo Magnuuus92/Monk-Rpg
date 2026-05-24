@@ -186,7 +186,7 @@ function renderCombatActions() {
   <button onclick="cancelSkill()">Cancel</button> 
   `;
   }
-  //build skill btn for unlocked combat skills. HEREIAM
+
   const skillButtons = renderCombatSkillButtons();
   return `${skillButtons}
 <br /><br />
