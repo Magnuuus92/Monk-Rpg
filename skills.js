@@ -46,6 +46,21 @@ const SKILL_DATA = {
     requiresText: "any of a2, a3 or a4 unlocked.",
     requires: () =>
       playerState.skills.a2 || playerState.skills.a3 || playerState.skills.a4,
+
+    onUnlock() {
+      const stats = playerState.stats;
+      stats.strength += 4;
+      stats.dexterity += 4;
+      stats.vitality += 4;
+      stats.vitality += 4;
+      stats.willpower += 4;
+      stats.intellect += 4;
+      // recalculate stats
+      const d = getDerivedStats(playerState.stats);
+      playerState.maxHp = d.maxHp;
+      playerState.maxEnergy = d.maxEnergy;
+      log("Force of nature: +4 to all stats.");
+    },
   },
   a7: {
     name: "Power Smash",
@@ -89,7 +104,7 @@ const SKILL_DATA = {
   b6: {
     name: "Defensive State of Mind",
     description:
-      "(Passive) 40% of your unused block is carried over to your next turn.",
+      "(Passive) 40% of your unused block is carried over to your next turn(70% with bc2).",
     requiresText: "b2, b3 or b4 unlocked.",
     requires: () =>
       playerState.skills.b2 || playerState.skills.b3 || playerState.skills.b4,
@@ -122,6 +137,7 @@ const SKILL_DATA = {
     requires: () => playerState.skills.c1,
   },
   c4: {
+    // subject to change(dmg and cost to scale with current energy)
     name: "Chi Blast",
     description: "(Active) High damage (Scales with LVL, WIS and INT).",
     requiresText: "c1 unlocked.",
@@ -159,9 +175,21 @@ const SKILL_DATA = {
   },
   ab2: {
     name: "Strength Beyond Measure",
-    description: "(Passive) Gain 10 STR, DEX, VIT and RES.",
+    description: "(Passive) Permanently gain +6 STR, +3 DEX, +3 VIT, +3 RES.",
     requiresText: "ab1 unlocked.",
     requires: () => playerState.skills.ab1,
+    onUnlock() {
+      const s = playerState.stats;
+      s.strength += 6;
+      s.dexterity += 3;
+      s.vitality += 3;
+      s.resilience += 3;
+
+      const d = getDerivedStats(playerState.stats);
+      playerState.maxHp = d.maxHp;
+      playerState.maxEnergy = d.maxEnergy;
+      log("Strength beyond measure: +6 STR, +3 DEX, +3 VIT, +3 RES.");
+    },
   },
   ab3: {
     name: "Retaliation Specialist",
@@ -184,6 +212,7 @@ const SKILL_DATA = {
     requires: () => playerState.skills.bc1,
   },
   bc3: {
+    // HEREIAM
     name: "Spiritual Awekening",
     description: "(Passive) Gain 100 MaxHP and 100 MaxEnergy.",
     requiresText: "bc1 unlocked.",
@@ -215,19 +244,19 @@ const SKILL_DATA = {
   },
   r4: {
     name: "Defensive spirits",
-    description: "(Passive) placeholder",
+    description: "(Passive) placeholder (NOT IMPLEMENTED)",
     requiresText: "5 unlocked in discipline + 5 in spirit.",
     requires: () => countUnlocked("b") >= 5 && countUnlocked("c") >= 5,
   },
   r5: {
     name: "Unlocked Pendant",
-    description: "(Passive) placeholder",
+    description: "(Passive) Gain 10 block at the start of every player turn.",
     requiresText: "WorldReqPlaceholder.",
     requires: () => false, //placehold
   },
   r6: {
     name: "Divine Knowledge",
-    description: "(Passive) placeholder",
+    description: "(Passive) +1 MaxAp",
     requiresText: "WorldReqPlaceholder.",
     requires: () => false, //placehold
   },

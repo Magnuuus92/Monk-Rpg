@@ -25,17 +25,32 @@ function calcStrikeDamage(flatBonus = 0) {
   const b5 = playerState.skills.b5 ? p.stats.resilience : 0;
   return base + b5 + flatBonus;
 }
+//Remove maxHp/Energy cap if r3unlocked
+function combatHpCap() {
+  return playerState.skills.r3 ? 99999 : playerState.maxHp;
+}
+function combatEnergyCap() {
+  return playerState.skills.r3 ? 99999 : playerState.maxEnergy;
+}
+//gain energy in combat helper
+function gainEnergyCombat(amount) {
+  playerState.energy = Math.min(combatEnergyCap(), playerState.energy + amount);
+}
 //per turn energy gain and used for accumulateEnergy
 function calcEnergyGain() {
   const p = playerState;
-  let gain = Math.max(
-    1,
-    Math.round(p.level / 10 + p.stats.willpower / 5 + p.stats.intellect / 5),
-  );
   if (playerState.skills.c5) {
-    gain += Math.round(p.stats.willpower / 5 + p.stats.intellect / 5);
+    return Math.max(
+      1,
+      Math.round(
+        p.level / 10 + p.stats.intellect / 2.5 + p.stats.willpower / 2.5,
+      ),
+    );
   }
-  return gain;
+  return Math.max(
+    1,
+    Math.round(p.level / 10 + p.stats.intellect / 5 + p.stats.willpower / 5),
+  ); // prettier commas?
 }
 //TRIGGER FUNCTIONS:
 //Strike (a1,b1,b3,b4 and ab1) and basick attack.
@@ -84,10 +99,10 @@ function triggerForcefield(target) {
 //Accumulate ENergy (c2, c7 and bc1)
 function triggerAccumulateEnergy() {
   const gain = calcEnergyGain();
-  ((playerState.combat.accumulatedEnergy += gain),
-    combatLog(
-      `Energy accumulated: +${gain}. (Total Pool: ${playerState.combat.accumulatedEnergy}).`,
-    ));
+  playerState.combat.accumulatedEnergy += gain;
+  combatLog(
+    `Energy accumulated: +${gain}. (Total Pool: ${playerState.combat.accumulatedEnergy}).`,
+  );
 }
 //ALERT STANCE
 function triggerAlertStance() {
@@ -249,7 +264,7 @@ function startCombat(areaIndex) {
   playerState.combat = {
     enemies: enemies,
     turn: 1,
-    actionPoints: 2,
+    actionPoints: 2 + (playerState.skills.r6 ? 1 : 0),
     maxAp: 2,
     alertStance: false,
     result: null,
@@ -416,9 +431,24 @@ function startNextPlayerTurn() {
     combat.block += block;
     combatLog(`The elements inspire you.. +${block}Block.`);
   }
-  //passive energy gain
+  //prepared (r1)
+  if (playerState.skills.r1) {
+    const block = p.stats.resilience;
+    const energy = Math.floor(p.stats.willpower / 2);
+    const hp = Math.floor(p.stats.vitality / 3);
+    combat.block += block;
+    combat.energy += Math.min(combatEnergyCap(), p.energy + energy);
+    combat.hp += Math.min(combatHpCap(), p.hp + hp);
+    combatLog(`Prepared: +${block} block, +${energy} energy and +${hp} HP.`);
+  }
+  // unlocked pendant (r5)
+  if (playerState.skills.r5) {
+    combat.block + 10;
+    combatLog(`Unlocked pendant: +10 block.`);
+  }
+  //passive energy gain + accumulated energy
   const energyGain = calcEnergyGain() + combat.accumulatedEnergy;
-  p.energy = Math.min(p.maxEnergy, p.energy + energyGain);
+  p.energy = Math.min(combatEnergyCap(), p.energy + energyGain);
   combatLog(
     `Turn: ${combat.turn}. You gain ${energyGain} Energy. Block: ${combat.block}.`,
   );
@@ -468,7 +498,7 @@ function fightTestDummy() {
   playerState.combat = {
     enemies: enemies,
     turn: 1,
-    actionPoints: 2,
+    actionPoints: 2 + (playerState.skills.r6 ? 1 : 0),
     maxAp: 2,
     alertStance: false,
     result: null,
