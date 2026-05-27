@@ -101,7 +101,7 @@ const COMBAT_SKILLS = {
     },
   },
   a4: {
-    name: "Might Cranial Strike",
+    name: "Mighty Cranial Strike",
     apCost: 1,
     cost: { type: "energy", amount: 30 },
     needsTarget: true,
