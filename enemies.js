@@ -60,6 +60,12 @@ const ENEMY_MOVES = {
       return `${enemy.name} motivates an ally (+1 STR).`;
     },
   },
+  exist: {
+    name: "Exist",
+    execute(enemy, player) {
+      return `${enemy.name} just exists..`;
+    },
+  },
 };
 
 function applyDamageToPlayer(rawDamage, player) {
@@ -134,5 +140,21 @@ const SHADOW_CLAN = {
     str: 1,
     ap: 1,
     moves: ["lunge", "block"],
+  },
+  debris: {
+    name: "Big pile debris",
+    hp: 250,
+    str: 0,
+    ap: 1,
+    moves: ["exist"],
+  },
+};
+const MISC_ENEMIES = {
+  debris: {
+    name: "Big pile debris",
+    hp: 250,
+    str: 0,
+    ap: 1,
+    moves: ["exist"],
   },
 };
