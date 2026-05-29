@@ -77,8 +77,19 @@ const playerState = {
   day: 1,
   dayPoints: 5,
   maxDayPoints: 5,
-  currentArea: null, //This sets area to base.
-  areasConquered: [false, false, false, false],
 
+  worldUnlocks: {
+    area0Unlocked: true,
+    area1Unlocked: false,
+    area2Unlocked: false,
+    area3Unlocked: false,
+    area4Unlocked: false,
+  },
+  currentAreaId: null,
+  currentRoomId: null,
+  areasConquered: [false, false, false, false],
+  roomsCleared: {},
+  npcsVisited: {},
+  wanderEvent: null,
   combat: null,
 };
