@@ -361,6 +361,11 @@ function fightTestDummy() {
   const enemies = [
     createEnemy(SHADOW_CLAN.scTestDummy),
     createEnemy(SHADOW_CLAN.scTestDummy),
+    createEnemy(SHADOW_CLAN.scLieutenant),
+    createEnemy(SHADOW_CLAN.scLieutenant),
+    createEnemy(SHADOW_CLAN.scLieutenant),
+    createEnemy(SHADOW_CLAN.scLieutenant),
+    createEnemy(SHADOW_CLAN.scLieutenant),
   ];
   playerState.hp = playerState.maxHp;
   playerState.energy = playerState.maxEnergy;
