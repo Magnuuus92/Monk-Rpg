@@ -368,7 +368,7 @@ function fightTestDummy() {
     enemies: enemies,
     turn: 1,
     actionPoints: 2 + (playerState.skills.r6 ? 1 : 0),
-    maxAp: 2,
+    maxAp: 2 + (playerState.skills.r6 ? 1 : 0),
     alertStance: false,
     result: null,
     block: 0,

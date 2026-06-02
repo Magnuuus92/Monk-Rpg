@@ -264,7 +264,7 @@ const SKILL_DATA = {
   r6: {
     name: "Divine Knowledge",
     description: "(Passive) +1 MaxAp",
-    requiresText: "WorldReqPlaceholder.",
+    requiresText: "Some scroll Placeholder.",
     requires: () =>
       countUnlocked("a") >= 7 &&
       countUnlocked("b") >= 7 &&
