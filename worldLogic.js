@@ -106,7 +106,7 @@ function engageWanderEvent() {
   playerState.combat = {
     enemies: enemies,
     turn: 1,
-    actionPoints: 2, // this sets it to 2 even if 3 is max? TEST
+    actionPoints: 2 + (playerState.skills.r6 ? 1 : 0),
     maxAp: 2 + (playerState.skills.r6 ? 1 : 0),
     alerStance: false,
     result: null,
