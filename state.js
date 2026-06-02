@@ -18,7 +18,7 @@ const playerState = {
   name: "Hero",
   level: 1,
   experience: 0,
-  skillPoints: 50,
+  skillPoints: 15,
   statPoints: 0,
   stats: { ...baseStats },
   hp: derived.maxHp,
