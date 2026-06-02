@@ -128,5 +128,6 @@ function spendStatPoint(statName) {
   render();
 }
 
-log("Welcome to the base camp. Choose your action.");
+log("Welcome to the demo. This is my first project in JS.");
+log("See if you can beat the testdummies. Remember to use your skillpoints. ");
 render();
