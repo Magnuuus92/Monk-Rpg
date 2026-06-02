@@ -265,7 +265,10 @@ const SKILL_DATA = {
     name: "Divine Knowledge",
     description: "(Passive) +1 MaxAp",
     requiresText: "WorldReqPlaceholder.",
-    requires: () => false, //placehold
+    requires: () =>
+      countUnlocked("a") >= 7 &&
+      countUnlocked("b") >= 7 &&
+      countUnlocked("c") >= 7,
     onUnlock() {
       log("Divine Knowledge: +1 MaxAp.");
     },
