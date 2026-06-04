@@ -83,6 +83,7 @@ function endDay() {
   playerState.dayPoints = playerState.maxDayPoints;
   playerState.currentArea = null;
   log(`Day ${playerState.day} begins.`);
+  autoSave();
   render();
 }
 //-----WORLD HELPERS

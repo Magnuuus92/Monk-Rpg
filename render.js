@@ -89,7 +89,7 @@ function renderBaseActions() {
   return `
   ${btn("Rest", 1, "rest()")}
   ${btn("Train", 1, "train()")}
-  ${btn("Scout Area", 1, "scoutArea()")}
+  ${btn("Scout Area", 1, "scoutArea()")} 
   <button ${travelDisabled} onclick="travelToNextArea()">
   ${travelLabel} <small>(1 DP)</small>
   <button onclick="openWorld()"> World Map</button>
