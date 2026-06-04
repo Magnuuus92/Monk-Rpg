@@ -4,6 +4,10 @@ function render() {
     renderCombat();
   } else if (currentScreen === "skillTree") {
     renderSkillTree();
+  } else if (currentScreen === "renderWorld") {
+    renderWorld();
+  } else if (currentScreen === "saveLoad") {
+    renderSaveLoad();
   } else {
     renderBase();
   }
@@ -88,13 +92,62 @@ function renderBaseActions() {
   ${btn("Scout Area", 1, "scoutArea()")}
   <button ${travelDisabled} onclick="travelToNextArea()">
   ${travelLabel} <small>(1 DP)</small>
+  <button onclick="openWorld()"> World Map</button>
   </button>
   <br /><br />
   <button onclick="openSkillTree()">
   Skill Tree (SP: ${playerState.skillPoints})
   </button>
+  <button onclick="currentScreen = 'saveLoad'; render();">Save / Load</button> 
   <button onclick="fightTestDummy()">Fight test dummy</button>
   <button onclick="endDay()">End Day</button>
+  `;
+}
+function renderSaveLoad() {
+  const app = document.getElementById("app");
+
+  const slots = ["slot1", "slot2", "slot3"];
+  const autoInfo = getSlotInfo("autosave");
+
+  const slotRows = slots
+    .map((slot) => {
+      const info = getSlotInfo(slot);
+      return `
+    <div class="save-slot">
+    <strong>${slot}</strong> -
+    ${
+      info
+        ? `Day ${info.day} | Level ${info.level} | ${info.timestamp}`
+        : "<em> Empty </em>"
+    }
+    <br/>
+    <button onclick="saveGame('${slot}'); render();">Save</button>
+    <button ${info ? "" : "disabled"} onclick="loadGame('${slot}')">Load</button>
+    <button ${info ? "" : "disabled"} onclick="deleteSave('${slot}'); render();">Delete</button>
+    </div>
+    `;
+    })
+    .join("");
+  app.innerHTML = `
+  <h1> GAMEPROJECT - Save / Load</h1>
+  <button onclick="currentScreen === 'base'; render();">Back to base</button>
+  <hr />
+  
+  <h3>Save Slots<h3/>
+  ${slotRows}
+  
+  <hr />
+  <h3>Auto Save</h3>
+  <div class="save-slot">
+  ${
+    autoInfo
+      ? `Day ${autoInfo.day} | Lvl ${autoInfo.level} | ${autoInfo.timestamp}
+    <br/>
+    <button onclick="loadGame('autoSave')">Load Auto-Save</button>
+    <button onclick="deleteSave('autoSave'); render();">Delete Auto-save</button>`
+      : "<em>Empty..</em>"
+  }
+  </div>
   `;
 }
 
