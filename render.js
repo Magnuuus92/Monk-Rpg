@@ -130,7 +130,7 @@ function renderSaveLoad() {
     .join("");
   app.innerHTML = `
   <h1> GAMEPROJECT - Save / Load</h1>
-  <button onclick="currentScreen === 'base'; render();">Back to base</button>
+  <button onclick="currentScreen = 'base'; render();">Back to base</button>
   <hr />
   
   <h3>Save Slots<h3/>
