@@ -5,7 +5,7 @@ function render() {
   } else if (currentScreen === "skillTree") {
     renderSkillTree();
   } else if (currentScreen === "world") {
-    renderWorldMap();
+    renderWorld();
   } else if (currentScreen === "saveLoad") {
     renderSaveLoad();
   } else {
@@ -92,8 +92,8 @@ function renderBaseActions() {
   ${btn("Scout Area", 1, "scoutArea()")} 
   <button ${travelDisabled} onclick="travelToNextArea()">
   ${travelLabel} <small>(1 DP)</small>
-  <button onclick="openWorld()"> World Map</button>
   </button>
+  <button onclick="openWorld()"> World Map</button>
   <br /><br />
   <button onclick="openSkillTree()">
   Skill Tree (SP: ${playerState.skillPoints})

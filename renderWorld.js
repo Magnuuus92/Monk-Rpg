@@ -15,7 +15,7 @@ function renderWorldMap() {
   const areaCards = Object.values(AREAS)
     .map((area) => {
       const unlocked = area.isUnlocked();
-      const style = `background-color: ${area.color}; opacity ${unlocked ? "1" : "0.4"};`;
+      const style = `background-color: ${area.color}; opacity: ${unlocked ? "1" : "0.4"};`;
 
       return `<div class="area-card" style="${style}">
         <strong>${area.name}</strong><br/>
@@ -23,7 +23,7 @@ function renderWorldMap() {
         <button
         ${unlocked ? "" : "disabled"}
         onclick="enterArea('${area.id}')">
-        ${unlocked} ? "Enter" : "Locked"}
+       ${unlocked ? "Enter" : "Locked"}
         </button>
         </div>
         `;
@@ -60,7 +60,7 @@ function renderAreaOverview(areaId) {
         `;
 
       return `
-        <div class="room-card" style="${style}"
+        <div class="room-card" style="${style}">
         <strong>${locked ? "???" : room.name}</strong><br/>
         <small>${locked ? "Locked" : cleared ? "Cleared" : room.description}</small>
         <br/><br/>
@@ -77,7 +77,7 @@ function renderAreaOverview(areaId) {
   // wander action in safezone
   const wanderBtn = area.isSafeZone
     ? `
-    <button onclick="WanderTown()">
+    <button onclick="wanderTown()">
     Wander around town <small>(1 DP)</small>
     </button>
     `
@@ -148,7 +148,7 @@ function renderRoomActions(room, cleared) {
   if (room.contents.npcId) {
     const npc = NPCS[room.contents.npcId];
     parts.push(`
-            <button onclick="talkToNpc"('${npc.id}')">
+            <button onclick="talkToNpc('${npc.id}')">
             Talk to ${npc.name}
             </button>
             `);
@@ -156,7 +156,7 @@ function renderRoomActions(room, cleared) {
   //ENCOUNTER
   if (room.contents.encounterId && !cleared) {
     parts.push(`
-            <button onclick="engageRommEncounter('${room.id}')">
+            <button onclick="engageRoomEncounter('${room.id}')">
             Engage enemies
             </button>
             `);
@@ -170,7 +170,7 @@ function renderRoomActions(room, cleared) {
   //BOSS PLACEHOLDER
   if (room.contents.bossId && !cleared) {
     parts.push(
-      `<button onclick="engageRoomEncounter('${room.id})">
+      `<button onclick="engageRoomEncounter('${room.id}')">
     Fight boss
     </button>
     `,
