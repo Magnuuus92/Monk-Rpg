@@ -5,7 +5,7 @@ function render() {
   } else if (currentScreen === "skillTree") {
     renderSkillTree();
   } else if (currentScreen === "world") {
-    renderWorld();
+    renderWorldMap();
   } else if (currentScreen === "saveLoad") {
     renderSaveLoad();
   } else {
