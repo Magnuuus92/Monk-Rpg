@@ -133,7 +133,7 @@ function renderSaveLoad() {
   <button onclick="currentScreen = 'base'; render();">Back to base</button>
   <hr />
   
-  <h3>Save Slots<h3/>
+  <h3>Save Slots</h3>
   ${slotRows}
   
   <hr />

@@ -1,4 +1,4 @@
-//WORLD navigation
+//WORLD navigation HEREIAM 3bugs
 //open map from base only?
 function openWorld() {
   // TEST if only works from base.
@@ -36,7 +36,7 @@ function leaveRoom() {
   render();
 }
 //enter a specific room
-function enterRoom() {
+function enterRoom(roomId) {
   const room = ROOMS[roomId];
   if (!room) return;
   //recheck unlock conditions
@@ -108,7 +108,7 @@ function engageWanderEvent() {
     turn: 1,
     actionPoints: 2 + (playerState.skills.r6 ? 1 : 0),
     maxAp: 2 + (playerState.skills.r6 ? 1 : 0),
-    alerStance: false,
+    alertStance: false,
     result: null,
     block: 0,
     blockCarryover: 0,
@@ -157,21 +157,21 @@ function engageRoomEncounter(roomId) {
   playerState.hp = playerState.maxHp; // Subject to change?
   playerState.energy = playerState.maxEnergy;
 
-  playerState.combat ={
-enemies = buildFn(),
-turn: 1,
-actionPoints: 2,//subject to change/test
-maxAp: 2 + (playerState.skills.r6 ? 1 : 0),
-alerStance: false,
-result: null,
-block: 0,
-blockCarryover: 0,
-strikeCount:       0,
-flatDmgBonus:      0,
-timeDabbleUses:    0,
-pendingSkill:      null,
-accumulatedEnergy: 0,
-log:[`You engage enemies in ${room.name}. Turn 1.`],
+  playerState.combat = {
+    enemies: buildFn(),
+    turn: 1,
+    actionPoints: 2, //subject to change/test
+    maxAp: 2 + (playerState.skills.r6 ? 1 : 0),
+    alertStance: false,
+    result: null,
+    block: 0,
+    blockCarryover: 0,
+    strikeCount: 0,
+    flatDmgBonus: 0,
+    timeDabbleUses: 0,
+    pendingSkill: null,
+    accumulatedEnergy: 0,
+    log: [`You engage enemies in ${room.name}. Turn 1.`],
   };
   render();
 }

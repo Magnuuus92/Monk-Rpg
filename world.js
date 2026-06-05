@@ -32,7 +32,7 @@ const NPCS = {
       } else {
         log("Mayor: Hows it going?");
       }
-      player.npcVisited["mayor"] = true;
+      player.npcsVisited["mayor"] = true;
     },
   },
   trainer1: {
@@ -44,7 +44,7 @@ const NPCS = {
       log(
         "Oh darn! The old arrow to the knee injury is acting up. We will have to sparr some other time. (not yet implemented.)",
       );
-      player.npcVisited["trainer1"] = true;
+      player.npcsVisited["trainer1"] = true;
     },
   },
 };
@@ -103,7 +103,7 @@ const ROOMS = {
     description: "A narrow alley. People sometimes get mugged here.",
     color: "#2a2a2a",
     state: "locked",
-    unlockCondition: () => playerState.npcVisited["mayor"] === true,
+    unlockCondition: () => playerState.npcsVisited["mayor"] === true,
     contents: {
       npcId: null,
       eventId: "alleyAmbush",
@@ -221,21 +221,21 @@ const WANDER_EVENTS = [
     description:
       "A fighter wants to test your mettle. He has challenged you to a sparring duel.",
     canFight: true,
-    encounter: () => [createEnemy(shadowClan.scTestDummy)],
+    encounter: () => [createEnemy(SHADOW_CLAN.scTestDummy)],
   },
   {
     id: "thief",
     description:
       "You witness a thief mugging a citizen at knifepoint. You yell out and the thief starts running. You run after him.",
     canFight: true,
-    encounter: () => [createEnemy(shadowClan.scWeakling)],
+    encounter: () => [createEnemy(SHADOW_CLAN.scWeakling)],
   },
   {
     id: "boulder",
     description:
       "A large pile of debris is blocking the street. Its making it hard for citizens to pass by. You get to work dismantling it.",
     canFight: true,
-    encounter: () => [createEnemy(shadowClan.debris)], //uncertain about this one.
+    encounter: () => [createEnemy(SHADOW_CLAN.debris)], //uncertain about this one.
   },
   {
     id: "nothing",
