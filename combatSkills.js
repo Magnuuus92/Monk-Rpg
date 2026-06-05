@@ -5,7 +5,7 @@ function canAffordSkill(key) {
   if (combat.actionPoints < skill.apCost) return false;
 
   //timedabble limit turn use without c6
-  if (key === "c3" && playerState.skills.c6 && combat.timeDabbleUses >= 1) {
+  if (key === "c3" && !playerState.skills.c6 && combat.timeDabbleUses >= 1) {
     return false;
   }
 
