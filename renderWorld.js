@@ -92,8 +92,8 @@ function renderAreaOverview(areaId) {
         <h1>GAMEPROJECT — ${area.name}</h1>
         ${renderWorldStatusBar()}
         <hr />
-        <button onclick="openWorld()">← World Map</button>
-        <button onclick="returnToBase()">← Return to Base</button>
+        <button onclick="openWorld()">World Map</button>
+        <button onclick="returnToBase()">Return to Base</button>
         <p><em>${area.description}</em></p>
         <hr />
         ${wanderEventPanel}
