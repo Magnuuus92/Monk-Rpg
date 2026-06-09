@@ -184,7 +184,7 @@ function checkEnemiesDead() {
   const combat = playerState.combat;
   combat.enemies.forEach((e) => {
     if (e.hp <= 0 && e.hp !== -999) {
-      combatLog(`${e.name} is deafeated.`);
+      combatLog(`${e.name} is defeated.`);
       e.hp = -999;
     }
   });

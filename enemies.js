@@ -156,12 +156,15 @@ const ENEMY_MOVES = {
   },
 
   weakPartyHeal: {
+    // big bug: Heal defeats all enemies
     name: "Weak Party Heal",
     execute(enemy, player) {
       const healAmount = 20 + enemy.str * 3;
-      playerState.combat.enemies.filter(enemy.isAlive()).forEach((e) => {
-        e.hp = Math.min(e.maxHp, e.hp + healAmount);
-      });
+      playerState.combat.enemies
+        .filter((e) => e.isAlive())
+        .forEach((e) => {
+          e.hp = Math.min(e.maxHp, e.hp + healAmount);
+        });
       return `${enemy.name} heals all allies for ${healAmount} hp.`;
     },
   },
@@ -170,9 +173,11 @@ const ENEMY_MOVES = {
     name: "Party Heal",
     execute(enemy, player) {
       const healAmount = 30 + enemy.str * 4;
-      playerState.combat.enemies.filter(enemy.isAlive()).forEach((e) => {
-        e.hp = Math.min(e.maxHp, e.hp + healAmount);
-      });
+      playerState.combat.enemies
+        .filter((e) => e.isAlive())
+        .forEach((e) => {
+          e.hp = Math.min(e.maxHp, e.hp + healAmount);
+        });
       return `${enemy.name} heals all allies for ${healAmount} hp.`;
     },
   },
@@ -180,9 +185,11 @@ const ENEMY_MOVES = {
     name: "Potent Party Heal",
     execute(enemy, player) {
       const healAmount = 40 + enemy.str * 5;
-      playerState.combat.enemies.filter(enemy.isAlive()).forEach((e) => {
-        e.hp = Math.min(e.maxHp, e.hp + healAmount);
-      });
+      playerState.combat.enemies
+        .filter((e) => e.isAlive())
+        .forEach((e) => {
+          e.hp = Math.min(e.maxHp, e.hp + healAmount);
+        });
       return `${enemy.name} heals all allies for ${healAmount} hp.`;
     },
   },
@@ -223,8 +230,10 @@ const SHADOW_CLAN = {
   scHenchman: {
     name: "SC Henchman",
     hp: 60,
+    maxHp: 60,
     str: 2,
     ap: 1,
+    maxAp: 1,
     moves: ["lunge", "kick", "block"],
     xpReward: 10,
     goldMin: 1,
@@ -235,8 +244,10 @@ const SHADOW_CLAN = {
   scLieutenant: {
     name: "SC Lieutenant",
     hp: 100,
+    maxHp: 100,
     str: 3,
     ap: 1,
+    maxAp: 1,
     moves: ["lunge", "kick", "block"],
     xpReward: 10,
     goldMin: 1,
@@ -247,8 +258,10 @@ const SHADOW_CLAN = {
   scNinja: {
     name: "SC Ninja",
     hp: 50,
+    maxHp: 50,
     str: 3,
     ap: 1,
+    maxAp: 1,
     moves: ["cut", "block", "lashOut"],
     xpReward: 10,
     goldMin: 1,
@@ -259,8 +272,10 @@ const SHADOW_CLAN = {
   scWeakling: {
     name: "SC Weakling",
     hp: 60,
+    maxHp: 60,
     str: 1,
     ap: 1,
+    maxAp: 1,
     moves: ["lashOut", "panic"],
     xpReward: 10,
     goldMin: 1,
@@ -271,8 +286,10 @@ const SHADOW_CLAN = {
   scSalesPerson: {
     name: "SC Sales Person",
     hp: 80,
+    maxHp: 80,
     str: 2,
     ap: 1,
+    maxAp: 1,
     moves: ["lunge", "block", "motivate"],
     xpReward: 10,
     goldMin: 1,
@@ -282,8 +299,10 @@ const SHADOW_CLAN = {
   scTestDummy: {
     name: "DumDum",
     hp: 50,
+    maxHp: 50,
     str: 1,
     ap: 1,
+    maxAp: 1,
     moves: ["lunge", "block", "weakPartyHeal"],
     xpReward: 10,
     goldMin: 1,
@@ -293,8 +312,10 @@ const SHADOW_CLAN = {
   debris: {
     name: "Big pile debris",
     hp: 250,
+    maxHp: 250,
     str: 0,
     ap: 1,
+    maxAp: 1,
     moves: ["exist"],
     xpReward: 40,
     goldMin: 0,
@@ -305,10 +326,12 @@ const SHADOW_CLAN = {
 const AFTERLIFE_CULT = {
   alcHenchman: {
     name: "ALV Henchman",
-    HP: 100,
-    STR: 2,
-    AP: 1,
-    Moves: ["lunge", "kick", "block"],
+    hp: 100,
+    maxHp: 100,
+    str: 2,
+    ap: 1,
+    maxAp: 1,
+    moves: ["lunge", "kick", "block"],
     xpReward: 10,
     goldMin: 1,
     goldMax: 5,
@@ -316,10 +339,12 @@ const AFTERLIFE_CULT = {
   },
   alcLieutenant: {
     name: "ALC Lieutenant",
-    HP: 150,
-    STR: 3,
-    AP: 1,
-    Moves: ["lunge", "kick", "block", "motivate"],
+    hp: 150,
+    maxHp: 150,
+    str: 3,
+    ap: 1,
+    maxAp: 1,
+    moves: ["lunge", "kick", "block", "motivate"],
     xpReward: 10,
     goldMin: 1,
     goldMax: 5,
@@ -327,10 +352,12 @@ const AFTERLIFE_CULT = {
   },
   alcFanatic: {
     name: "ALC Fanatic",
-    HP: 90,
-    STR: 1,
-    AP: 1,
-    Moves: ["lash Out", "panic"],
+    hp: 90,
+    maxHp: 90,
+    str: 1,
+    ap: 1,
+    maxAp: 1,
+    moves: ["lash Out", "panic"],
     xpReward: 10,
     goldMin: 1,
     goldMax: 5,
@@ -338,9 +365,11 @@ const AFTERLIFE_CULT = {
   },
   alcRecruiter: {
     name: "ALC Recruiter",
-    HP: 190,
-    STR: 3,
-    AP: 1,
+    hp: 190,
+    maxHp: 190,
+    str: 3,
+    ap: 1,
+    maxAp: 1,
     Moves: ["cut", "block", "lashOut"],
     xpReward: 10,
     goldMin: 1,
@@ -349,10 +378,11 @@ const AFTERLIFE_CULT = {
   },
   alcHound: {
     name: "ALC Hound",
-    HP: 110,
-    STR: 2,
-    AP: 1,
-    Moves: ["lunge", "bite", "snarl"],
+    hp: 110,
+    maxHp: 110,
+    str: 2,
+    ap: 1,
+    moves: ["lunge", "bite", "snarl"],
     xpReward: 10,
     goldMin: 1,
     goldMax: 5,
@@ -363,8 +393,10 @@ const MISC_ENEMIES = {
   debris: {
     name: "Big pile debris",
     hp: 250,
+    maxHp: 250,
     str: 0,
     ap: 1,
+    maxAp: 1,
     moves: ["exist"],
     xpReward: 10,
     goldMin: 1,
@@ -373,7 +405,7 @@ const MISC_ENEMIES = {
   },
 };
 
-function rollGold(enemies) {
+function rollGold(enemy) {
   return (
     Math.floor(Math.random() * (enemy.goldMax - enemy.goldMin + 1)) +
     enemy.goldMin
