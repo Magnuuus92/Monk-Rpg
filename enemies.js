@@ -156,7 +156,6 @@ const ENEMY_MOVES = {
   },
 
   weakPartyHeal: {
-    // big bug: Heal defeats all enemies
     name: "Weak Party Heal",
     execute(enemy, player) {
       const healAmount = 20 + enemy.str * 3;
