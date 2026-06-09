@@ -17,6 +17,7 @@ const ENEMY_MOVES = {
   },
 
   lashOut: {
+    //Lash out: deal (3 + str*1) 3 times
     name: "Lash Out",
     execute(enemy, player) {
       let total = 0;
@@ -28,6 +29,18 @@ const ENEMY_MOVES = {
       return `${enemy.name} lashes out 3 times for ${total} damage.`;
     },
   },
+  bladeFlurry: {
+    name: "Blade Flurry",
+    execute(enemy, player) {
+      let total = 0;
+      for (let i = 0; i < 5; i++) {
+        const hit = 10 + enemy.str * 2;
+        total += hit;
+      }
+      applyDamageToPlayer(total, player);
+      return `${enemy.name} attacks with 5 swift cuts for ${total} damage.`;
+    },
+  },
 
   block: {
     name: "Block",
@@ -35,6 +48,15 @@ const ENEMY_MOVES = {
       const blockAmount = 10 + enemy.str * 2;
       enemy.block = (enemy.block || 0) + blockAmount;
       return `${enemy.name} blocks, gaining ${blockAmount} block.`;
+    },
+  },
+  guard: {
+    name: "Guard",
+    execute(enemy, player) {
+      // subject to change: guard give block to ally. remember to change in combat aswell
+      const blockAmount = 10 + enemy.str * 3;
+      enemy.block = (enemy.block || 0) + blockAmount;
+      return `${enemy.name} guards, gaining ${blockAmount} block.`;
     },
   },
 
@@ -56,14 +78,112 @@ const ENEMY_MOVES = {
   motivate: {
     name: "Motivate",
     execute(enemy, player) {
-      //subject to change
+      //logic in combat js
       return `${enemy.name} motivates an ally (+1 STR).`;
+    },
+  },
+  supplyArmaments: {
+    name: "Supply Armaments",
+    execute(enemy, player) {
+      return `${enemy.name} supplys an ally(+3 STR).`;
     },
   },
   exist: {
     name: "Exist",
     execute(enemy, player) {
       return `${enemy.name} just exists..`;
+    },
+  },
+  bite: {
+    name: "Bite",
+    execute(enemy, player) {
+      const damage = 15 + enemy.str * 2;
+      applyDamageToPlayer(damage, player);
+      return `${enemy.name} bites for ${damage} damage.`;
+    },
+  },
+  snarl: {
+    name: "Snarl",
+    execute(enemy, player) {
+      return `${enemy.name} is snarling menacingly.`;
+    },
+  },
+  motivateAll: {
+    name: "Motivate All",
+    execute(enemy, player) {
+      // no logic yet
+      return `${enemy.name} motivates all allies (+1 STR).`;
+    },
+  },
+
+  deadlyBite: {
+    name: "Deadly Bite",
+    execute(enemy, player) {
+      const damage = 30 + enemy.str * 2;
+      applyDamageToPlayer(damage, player);
+      return `${enemy.name} Bites viciously for ${damage} damage.`;
+    },
+  },
+  zoneOut: {
+    name: "Zone Out",
+    execute(enemy, player) {
+      return `${enemy.name} Lost focus and does nothing.`;
+    },
+  },
+  scratch: {
+    name: "Scratch",
+    execute(enemy, player) {
+      const damage = 25 + enemy.str * 1;
+      applyDamageToPlayer(damage, player);
+      return `${enemy.name} scratches dealing ${damage} damage.`;
+    },
+  },
+  uppercut: {
+    name: "Uppercut",
+    execute(enemy, player) {
+      const damage = 40 + enemy.str * 2;
+      applyDamageToPlayer(damage, player);
+      return `${enemy.name} Does an uppercut dealing ${damage} damage.`;
+    },
+  },
+  daggerThrow: {
+    name: "Dagger Throw",
+    execute(enemy, player) {
+      const damage = 20 + enemy.str * 4;
+      applyDamageToPlayer(damage, player);
+      return `${enemy.name} is hurling daggers at you, dealing ${damage} damage.`;
+    },
+  },
+
+  weakPartyHeal: {
+    name: "Weak Party Heal",
+    execute(enemy, player) {
+      const healAmount = 20 + enemy.str * 3;
+      playerState.combat.enemies.filter(enemy.isAlive()).forEach((e) => {
+        e.hp = Math.min(e.maxHp, e.hp + healAmount);
+      });
+      return `${enemy.name} heals all allies for ${healAmount} hp.`;
+    },
+  },
+
+  partyHeal: {
+    name: "Party Heal",
+    execute(enemy, player) {
+      const healAmount = 30 + enemy.str * 4;
+      playerState.combat.enemies.filter(enemy.isAlive()).forEach((e) => {
+        e.hp = Math.min(e.maxHp, e.hp + healAmount);
+      });
+      return `${enemy.name} heals all allies for ${healAmount} hp.`;
+    },
+  },
+  potentPartyHeal: {
+    name: "Potent Party Heal",
+    execute(enemy, player) {
+      const healAmount = 40 + enemy.str * 5;
+      playerState.combat.enemies.filter(enemy.isAlive()).forEach((e) => {
+        e.hp = Math.min(e.maxHp, e.hp + healAmount);
+      });
+      return `${enemy.name} heals all allies for ${healAmount} hp.`;
     },
   },
 };
@@ -88,12 +208,17 @@ function createEnemy(template) {
     maxAp: template.ap,
     block: 0,
     moves: template.moves,
+    //buffPriority: template.buffPriority, Maybe later
+    //protectPriority: template.protectPriority,
+    xpReward: template.xpReward,
+    goldMin: template.goldMin,
+    goldMax: template.goldMax,
+    fameReward: template.fameReward,
     isAlive() {
       return this.hp > 0;
     },
   };
 }
-
 const SHADOW_CLAN = {
   scHenchman: {
     name: "SC Henchman",
@@ -101,6 +226,10 @@ const SHADOW_CLAN = {
     str: 2,
     ap: 1,
     moves: ["lunge", "kick", "block"],
+    xpReward: 10,
+    goldMin: 1,
+    goldMax: 5,
+    fameReward: 1,
   },
 
   scLieutenant: {
@@ -109,6 +238,10 @@ const SHADOW_CLAN = {
     str: 3,
     ap: 1,
     moves: ["lunge", "kick", "block"],
+    xpReward: 10,
+    goldMin: 1,
+    goldMax: 5,
+    fameReward: 1,
   },
 
   scNinja: {
@@ -117,6 +250,10 @@ const SHADOW_CLAN = {
     str: 3,
     ap: 1,
     moves: ["cut", "block", "lashOut"],
+    xpReward: 10,
+    goldMin: 1,
+    goldMax: 5,
+    fameReward: 1,
   },
 
   scWeakling: {
@@ -125,6 +262,10 @@ const SHADOW_CLAN = {
     str: 1,
     ap: 1,
     moves: ["lashOut", "panic"],
+    xpReward: 10,
+    goldMin: 1,
+    goldMax: 5,
+    fameReward: 1,
   },
 
   scSalesPerson: {
@@ -133,13 +274,21 @@ const SHADOW_CLAN = {
     str: 2,
     ap: 1,
     moves: ["lunge", "block", "motivate"],
+    xpReward: 10,
+    goldMin: 1,
+    goldMax: 5,
+    fameReward: 1,
   },
   scTestDummy: {
     name: "DumDum",
     hp: 50,
     str: 1,
     ap: 1,
-    moves: ["lunge", "block"],
+    moves: ["lunge", "block", "weakPartyHeal"],
+    xpReward: 10,
+    goldMin: 1,
+    goldMax: 5,
+    fameReward: 1,
   },
   debris: {
     name: "Big pile debris",
@@ -147,6 +296,67 @@ const SHADOW_CLAN = {
     str: 0,
     ap: 1,
     moves: ["exist"],
+    xpReward: 40,
+    goldMin: 0,
+    goldMax: 0,
+    fameReward: 3,
+  },
+};
+const AFTERLIFE_CULT = {
+  alcHenchman: {
+    name: "ALV Henchman",
+    HP: 100,
+    STR: 2,
+    AP: 1,
+    Moves: ["lunge", "kick", "block"],
+    xpReward: 10,
+    goldMin: 1,
+    goldMax: 5,
+    fameReward: 1,
+  },
+  alcLieutenant: {
+    name: "ALC Lieutenant",
+    HP: 150,
+    STR: 3,
+    AP: 1,
+    Moves: ["lunge", "kick", "block", "motivate"],
+    xpReward: 10,
+    goldMin: 1,
+    goldMax: 5,
+    fameReward: 1,
+  },
+  alcFanatic: {
+    name: "ALC Fanatic",
+    HP: 90,
+    STR: 1,
+    AP: 1,
+    Moves: ["lash Out", "panic"],
+    xpReward: 10,
+    goldMin: 1,
+    goldMax: 5,
+    fameReward: 1,
+  },
+  alcRecruiter: {
+    name: "ALC Recruiter",
+    HP: 190,
+    STR: 3,
+    AP: 1,
+    Moves: ["cut", "block", "lashOut"],
+    xpReward: 10,
+    goldMin: 1,
+    goldMax: 5,
+    fameReward: 1,
+  },
+  alcHound: {
+    name: "ALC Hound",
+    HP: 110,
+    STR: 2,
+    AP: 1,
+    Moves: ["lunge", "bite", "snarl"],
+    xpReward: 10,
+    goldMin: 1,
+    goldMax: 5,
+    fameReward: 1,
   },
 };
 const MISC_ENEMIES = {
@@ -156,5 +366,16 @@ const MISC_ENEMIES = {
     str: 0,
     ap: 1,
     moves: ["exist"],
+    xpReward: 10,
+    goldMin: 1,
+    goldMax: 5,
+    fameReward: 1,
   },
 };
+
+function rollGold(enemies) {
+  return (
+    Math.floor(Math.random() * (enemy.goldMax - enemy.goldMin + 1)) +
+    enemy.goldMin
+  );
+}

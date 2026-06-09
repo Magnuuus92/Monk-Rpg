@@ -197,7 +197,7 @@ const AREAS = {
   },
   area3: {
     id: "area3",
-    name: "Undead Wastes",
+    name: "Ancient Burial Grounds",
     description: "Placeholder.",
     color: AREA_COLORS.area3,
     isUnlocked: () => playerState.worldUnlocks.area3Unlocked,
@@ -207,7 +207,7 @@ const AREAS = {
 
   area4: {
     id: "area4",
-    name: "Syndicate Stronghold",
+    name: "",
     description: "Placeholder.",
     color: AREA_COLORS.area4,
     isUnlocked: () => playerState.worldUnlocks.area4Unlocked,

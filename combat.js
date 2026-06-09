@@ -55,6 +55,7 @@ function enemyTurn() {
       }
 
       if (moveKey === "motivate") {
+        // copy just with supply arm +3
         const allies = enemies.filter((e) => e !== enemy && e.isAlive());
         if (allies.length > 0) {
           const t = allies[Math.floor(Math.random() * allies.length)];
@@ -65,9 +66,26 @@ function enemyTurn() {
             `${enemy.name} tries to motivate, but sadly has no allies left.`,
           );
         }
+        if (moveKey === "supplyArmaments") {
+          const allies = enemies.filter((e) => e !== enemy && e.isAlive());
+          if (allies.length > 0) {
+            const t = allies[Math.floor(Math.random() * allies.length)];
+            t.str += 3;
+            combatLog(
+              `${enemy.name} supplies ${t.name} with weaponry (+3 to STR).`,
+            );
+          } else {
+            combatLog(
+              `${enemy.name} tries to support his allies, but sadly has no allies left.`,
+            );
+          }
+        }
       } else if (moveKey === "block") {
         move.execute(enemy, playerState);
         combatLog(`${enemy.name} blocks.`);
+      } else if (moveKey === "guard") {
+        move.execute(enemy, playerState);
+        combatLog(`${enemy.name} guards.`);
       } else {
         const result = move.execute(enemy, playerState);
         combatLog(result);
@@ -302,15 +320,22 @@ function startCombat(areaIndex) {
 }
 
 function endCombat(victory) {
-  // change this after enemies are made. xp and gold reward determined by enemies.
   if (victory) {
-    const xpReward = 50 * (playerState.currentArea + 1);
-    const goldReward = 10 * (playerState.currentArea + 1);
-    playerState.experience += xpReward;
-    playerState.gold += goldReward;
-    log(`Victory! Gained ${xpReward} Exp and ${goldReward} gold.`);
+    let totalXp = 0;
+    let totalGold = 0;
+    let totalFame = 0;
+
+    playerState.combat.enemies.forEach((e) => {
+      totalXp += e.xpReward;
+      totalGold += rollGold(e);
+      totalFame += e.fameReward;
+    });
+    playerState.experience += totalXp;
+    playerState.gold += totalGold;
+    playerState.fame += totalFame;
+    log(`Victory! Gained ${totalXp} Exp and ${totalGold} gold.`);
     checkLevelUp();
-    playerState.areasConquered[playerState.currentArea] = true;
+    //playerState.areasConquered[playerState.currentArea] = true; BOSS will have this!
   } else {
     log("Defeated you respawn at base.");
     playerState.hp = Math.floor(playerState.maxHp * 0.5);
@@ -361,10 +386,6 @@ function fightTestDummy() {
   const enemies = [
     createEnemy(SHADOW_CLAN.scTestDummy),
     createEnemy(SHADOW_CLAN.scTestDummy),
-    createEnemy(SHADOW_CLAN.scLieutenant),
-    createEnemy(SHADOW_CLAN.scLieutenant),
-    createEnemy(SHADOW_CLAN.scLieutenant),
-    createEnemy(SHADOW_CLAN.scLieutenant),
     createEnemy(SHADOW_CLAN.scLieutenant),
   ];
   playerState.hp = playerState.maxHp;

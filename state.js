@@ -27,6 +27,7 @@ const playerState = {
   maxEnergy: derived.maxEnergy,
 
   gold: 10,
+  fame: 0,
   skills: {
     //force branch
     a1: false,
