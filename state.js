@@ -93,4 +93,27 @@ const playerState = {
   npcsVisited: {},
   wanderEvent: null,
   combat: null,
+
+  counters: {
+    physLabour: 0,
+    broadMind: 0,
+    becomeFlex: 0,
+    harnessPow: 0,
+  },
+  claimedThresholds: {
+    physLabour: [],
+    broadMind: [],
+    becomeFlex: [],
+    harnessPow: [],
+  },
+  counterUnlocks: {
+    physLabour: false,
+    physLabour2: false,
+    broadMind: false,
+    broadMind2: false,
+    becomeFlex: false,
+    becomeFlex2: false,
+    harnessPow: false,
+    harnessPow2: false,
+  },
 };
