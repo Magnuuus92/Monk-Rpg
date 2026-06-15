@@ -6,6 +6,99 @@ const AREA_COLORS = {
   area3: "#2a1a1a", //  Graveyard
   area4: "#1a2a2a", //  Syndicate
 };
+
+const UPGRADES = {
+  teaUp1: {
+    key: "teaUp1",
+    roomid: "teaHouse",
+    name: "Interior improvements",
+    description: "Fix teahouse interior.",
+    goldCost: 1,
+    requires: () => true,
+  },
+  teaUp2: {
+    key: "teaUp2",
+    roomid: "teaHouse",
+    name: "New business front.",
+    description: "Fix teahouse exterior.",
+    goldCost: 1,
+    requires: () => playerState.upgrades.teaUp1,
+  },
+  teaUp3: {
+    key: "teaUp3",
+    roomid: "teaHouse",
+    name: "Expand tea production I.",
+    description: "Teamaster will start producing a sellable surplus of tea.",
+    goldCost: 1,
+    requires: () => true,
+  },
+  teaUp4: {
+    key: "teaUp4",
+    roomid: "teaHouse",
+    name: "Expand tea production II.",
+    description: "Further expansion of tea production.",
+    goldCost: 1,
+    requires: () => playerState.upgrades.teaUp3,
+  },
+  teaUp5: {
+    key: "teaUp5",
+    roomid: "teaHouse",
+    name: "Employ neighbourhood kids",
+    description: "Employs neighbourhood kids to gather resources.",
+    goldCost: 1,
+    requires: () => playerState.socialUnlocks.neighbourKids,
+  },
+  dojoUp1: {
+    key: "dojoUp1",
+    roomid: "dojo",
+    name: "Donate",
+    description: "Fix the dojo.",
+    goldCost: 1,
+    requires: () => true,
+  },
+  gamblingUp1: {
+    key: "gamblingUp1",
+    roomid: "gamblingDen",
+    name: "New facilities",
+    description: "Replace worn and damaged interior.",
+    goldCost: 1,
+    requires: () => true,
+  },
+  gamblingUp2: {
+    key: "gamblingUp2",
+    roomid: "gamblingDen",
+    name: "Alcohol supply deal",
+    description:
+      "Get a discount on alcohol by buying in bulk, boosts income significantly.",
+    goldCost: 1,
+    requires: () => playerState.upgrades.tradeUp3,
+  },
+  gamblingUp3: {
+    key: "gamblingUp3",
+    roomid: "gamblingDen",
+    name: "Northern cardgames",
+    description: "Exotic card games that attracts new customers.",
+    goldCost: 1,
+    requires: () => playerState.socialUnlocks.northernCards,
+  },
+  arenaUp1: {
+    key: "arenaUp1",
+    roomId: "arena",
+    name: "Foreign Training Gear",
+    description: "Top-quality equipment. Attracts a variety of fighters.",
+    goldCost: 1,
+    requires: () => playerState.socialUnlocks.trainingGear,
+  },
+  arenaUp2: {
+    key: "arenaUp2",
+    roomId: "arena",
+    name: "Upgrade Combat Arena",
+    description: "Expand the arena. Allows up to 7 enemies in battle.",
+    goldCost: 1,
+    requires: () => true,
+  },
+  //hereiam
+};
 //npc definition
 const NPCS = {
   oldMerchant: {

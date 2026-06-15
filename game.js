@@ -82,6 +82,7 @@ function endDay() {
   playerState.day += 1;
   playerState.dayPoints = playerState.maxDayPoints;
   playerState.currentArea = null;
+  degradeAncestorHappiness();
   log(`Day ${playerState.day} begins.`);
   autoSave();
   render();
