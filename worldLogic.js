@@ -1,5 +1,3 @@
-//WORLD navigation HEREIAM 3bugs
-//open map from base only?
 function openWorld() {
   // TEST if only works from base.
   playerState.currentAreaId = null;
@@ -82,6 +80,277 @@ function talkToNpc(npcId) {
   }
   render();
 }
+const ROOM_ACTIONS = {
+  //TEAHOUSE
+  teaHouse: {
+    workHarvest: {
+      label: "Work Harvest",
+      description: "10 gold + 2 resources.",
+      dpCost: 1,
+      resourceCost: 0,
+      goldCost: 0,
+      available: () => true,
+      execute() {
+        ((playerState.gold += 10),
+          (playerState.resources += 2),
+          incrementCounter("physLabour", 1));
+        log(
+          "Your harvest tea leaves and clear out brush. +10 gold and +2 resources.",
+        );
+      },
+    },
+    renovate: {
+      label: "Renovate",
+      description: "Fix teahouse. (10 resources)",
+      dpCost: 1,
+      resourceCost: 10,
+      goldCost: 0,
+      available: () => playerState.resources >= 10,
+      execute() {
+        playerState.resources -= 10;
+        playerState.renovateCounts.teaHouse += 1;
+        incrementCounter("physLabour", 1);
+        const count = playerState.renovateCounts.teaHouse;
+        log(`Teahouse renovated. (${count}/10 until fully functional.)`);
+      },
+    },
+    teaCeremony: {
+      label: "Tea ceremony.",
+      description: "Restore hp and energy.",
+      dpCost: 1,
+      resourceCost: 0,
+      goldCost: 0,
+      available: () => true, // SUBJECT TO CHANGE renovated 10 or renovated bool
+      execute() {
+        playerState.hp = playerState.maxHp;
+        playerState.energy = playerState.maxEnergy;
+        incrementCounter("broadMind", 1);
+        log("You brew and drink ceremonial grade green tea.");
+      },
+    },
+  },
+  //DOJO
+  dojo: {
+    sparring: {
+      label: "Sparring",
+      description: "+10 exp while also making you stronger and more dexterous.",
+      dpCost: 1,
+      resourceCost: 0,
+      goldCost: 0,
+      available: () => true, //SUBJECT TO CHANGE
+      execute() {
+        playerState.experience += 10;
+        incrementCounter("becomeFlex", 1);
+        incrementCounter("harnessPow", 1);
+        checkLevelUp();
+        log("You spar at the dojo +10 exp.");
+      },
+    },
+    renovate: {
+      label: "Renovate",
+      description: "Fix the dojo. (5 resources)",
+      dpCost: 1,
+      resourceCost: 5,
+      goldCost: 0,
+      available: () => playerState.resources >= 5,
+      execute() {
+        playerState.resources -= 5;
+        playerState.renovateCounts.dojo += 1;
+        incrementCounter("physLabour", 1);
+        const count = playerState.renovateCounts.dojo;
+        log(`Dojo renovated. (${count}/10 until fully functional.)`);
+      },
+    },
+
+    workTrainer: {
+      label: "Work Trainer",
+      description: "10 gold. Flexible work.",
+      dpCost: 1,
+      resourceCost: 0,
+      goldCost: 0,
+      available: () => true, // SUBJECT TO CHANGE
+      execute() {
+        ((playerState.gold += 10), incrementCounter("becomeFlex", 1));
+        log("You work as a martial arts trainer. +10 gold.");
+      },
+    },
+  },
+  gamblingDen: {
+    renovate: {
+      label: "Renovate",
+      description: "Fix the gambling den. (15 resources)",
+      dpCost: 1,
+      resourceCost: 15,
+      goldCost: 0,
+      available: () => playerState.resources >= 15,
+      execute() {
+        playerState.resources -= 5;
+        playerState.renovateCounts.gamblingDen += 1;
+        incrementCounter("physLabour", 1);
+        const count = playerState.renovateCounts.gamblingDen;
+        log(`Gambling den renovated. (${count}/10 until fully functional.)`);
+      },
+    },
+    gamble: {
+      label: "Gamble",
+      description: "Try to win gold gambling.",
+      dpCost: 1,
+      resourceCost: 0,
+      goldCost: 10,
+      available: () => playerState.gold >= 10,
+      execute() {
+        incrementCounter("becomeFlex", 1);
+        if (Math.random() < 0.5) {
+          playerState.gold += 10;
+          log("You win! +10 gold.");
+        } else {
+          playerState.gold -= 10;
+          log("You lost.. -10 gold.");
+        }
+      },
+    },
+    socialize: {
+      label: "Socialize",
+      description:
+        "Strike up a conversation with patrons. You might get some valueable intel.",
+      dpCost: 1,
+      resourceCost: 0,
+      goldCost: 0,
+      available: () => true,
+      execute() {
+        incrementCounter("broadMind");
+        trySocialUnlock();
+      },
+    },
+    workBouncer: {
+      label: "Work as a bouncer",
+      description:
+        "Work as a bouncer. +20 gold. Some shifts are heavier than others..",
+      dpCost: 1,
+      resourceCost: 0,
+      goldCost: 0,
+      available: () => true,
+      execute() {
+        playerState.gold += 20;
+        incrementCounter("harnessPow", 1);
+        log("You work as a bouncer. You gained 20 gold.");
+      },
+    },
+  },
+  //ARENA
+  arena: {
+    renovate: {
+      label: "Renovate",
+      description: "Fix the arena. (15 resources)",
+      dpCost: 1,
+      resourceCost: 15,
+      goldCost: 0,
+      available: () => playerState.resources >= 15,
+      execute() {
+        playerState.resources -= 15;
+        playerState.renovateCounts.arena += 1;
+        incrementCounter("physLabour", 1);
+        const count = playerState.renovateCounts.arena;
+        log(`Arena renovated. (${count}/10 until fully functional.)`);
+      },
+    },
+    battle: {
+      label: "Battle",
+      description: "Fight a customized encounter.",
+      dpCost: 1,
+      resourceCost: 0,
+      goldCost: 0,
+      available: () => true,
+      execute() {
+        incrementCounter("harnessPow", 1);
+        startArenaBattle();
+      },
+    },
+  },
+  //TRADING DOCKS
+  tradingDocks: {
+    renovate: {
+      label: "Renovate",
+      description: "Fix the docks. (12 resources)",
+      dpCost: 1,
+      resourceCost: 12,
+      goldCost: 0,
+      available: () => playerState.resources >= 12,
+      execute() {
+        playerState.resources -= 12;
+        playerState.renovateCounts.arena += 1;
+        incrementCounter("physLabour", 1);
+        const count = playerState.renovateCounts.docks;
+        log(`Docks renovated. (${count}/10 until fully functional.)`);
+      },
+    },
+    talkToForeigners: {
+      label: "Talk to foreigners",
+      description:
+        "Talk to foreign merchants, you might learn something useful.",
+      dpCost: 1,
+      resourceCost: 0,
+      goldCost: 0,
+      available: () => true, //SUBJECT TO CHANGE
+      execute() {
+        incrementCounter("broadMind", 1);
+        trySocialUnlock();
+      },
+    },
+    worHauling: {
+      label: "Work hauling goods for merchants",
+      description:
+        "Work as a hauler. +30 gold. Some shifts are heavier than others..",
+      dpCost: 1,
+      resourceCost: 0,
+      goldCost: 0,
+      available: () => true,
+      execute() {
+        playerState.gold += 30;
+        incrementCounter("physLabour", 1);
+        log("You haul cargo all day. You gained 30 gold.");
+      },
+    },
+  },
+  ancestralGrounds: {
+    renovate: {
+      label: "Renovate",
+      description:
+        "Renovate the burial grounds of your ancestors.(20 resources)",
+      dpCost: 1,
+      resourceCost: 20,
+      goldCost: 0,
+      available: () => true,
+      execute() {
+        playerState.resources -= 20;
+        playerState.renovateCounts.ancestralGrounds += 1;
+        incrementCounter("physLabour", 1);
+        const count = playerState.renovateCounts.ancestralGrounds;
+        log(`Burial grounds renovated. (${count}/10 until fully functional.)`);
+      },
+    },
+    workGroundsKeeper: {
+      label: "Work as a Groundskeeper.",
+      description: " +20 gold, +20 ancestor happiness",
+      dpCost: 1,
+      resourceCost: 0,
+      goldCost: 0,
+      available: () => true,
+      execute() {
+        playerState.gold += 20;
+        playerState.ancestorHappiness = Math.min(
+          100,
+          playerState.ancestorHappiness + 20,
+        );
+        incrementCounter("broadMind", 1);
+        log(
+          `You tend the grounds. +20 gold, +20 ancestor happiness. Ancestor Hapiness: (${playerState.ancestorHappiness}/100).`,
+        );
+      },
+    },
+  },
+};
+//HEREIAM PERFORM ROOM ACTIONS
 // WANDER ACTION (dp cost)
 function wanderTown() {
   if (!spendDP(1)) return;

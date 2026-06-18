@@ -97,7 +97,56 @@ const UPGRADES = {
     goldCost: 1,
     requires: () => true,
   },
-  //hereiam
+  tradeUp1: {
+    key: "tradeUp1",
+    roomId: "tradingDocks",
+    name: "Better docking",
+    description: "Improved dock infrastructure.",
+    goldCost: 1,
+    requires: () => true,
+  },
+  tradeUp2: {
+    key: "tradeUp2",
+    roomId: "tradingDocks",
+    name: "Merchant amenities",
+    description: "Attracts more traders.",
+    goldCost: 1,
+    requires: () => true,
+  },
+  tradeUp3: {
+    key: "tradeUp3",
+    roomId: "tradingDocks",
+    name: "Merchant Deals",
+    description:
+      "Establishes partnership with merchants.(Unlocks upgrades elsewhere).",
+    goldCost: 1,
+    requires: () => playerState.upgrades.tradeUp2,
+  },
+  tradeUp4: {
+    key: "tradeUp4",
+    roomId: "tradingDocks",
+    name: "Overseas tea export",
+    description:
+      "Set up a deal with merchant to sell your surplus tea overseas at a premium.",
+    goldCost: 1,
+    requires: () => playerState.upgrades.teaUp2 && playerState.upgrades.teaUp3,
+  },
+  ancUp1: {
+    key: "ancUp1",
+    roomId: "ancestralGrounds",
+    name: "Fence",
+    description: "Fence up the graveyard.(Unlocks graveyard work).",
+    goldCost: 1,
+    requires: () => true,
+  },
+  ancUp2: {
+    key: "ancUp2",
+    roomId: "ancestralGrounds",
+    name: "Big Statue",
+    description: "Big monument to the ancestors.",
+    goldCost: 1,
+    requires: () => playerState.upgrades.ancUp1,
+  },
 };
 //npc definition
 const NPCS = {
@@ -138,6 +187,54 @@ const NPCS = {
         "Oh darn! The old arrow to the knee injury is acting up. We will have to sparr some other time. (not yet implemented.)",
       );
       player.npcsVisited["trainer1"] = true;
+    },
+  },
+  teaMaster: {
+    id: "teaMaster",
+    name: "Tea Master",
+    type: "story",
+    dialogue: "There is peace in every cup.",
+    onTalk(player) {
+      log(
+        "Tea Master: 'This teahouse has stood for generations. It needs care to survive.'",
+      );
+      player.npcsVisited["teaMaster"] = true;
+    },
+  },
+  martialArtist: {
+    id: "martialArtist",
+    name: "Martial Artist",
+    type: "trainer",
+    dialogue: "Discipline is the foundation of strength.",
+    onTalk(player) {
+      log("Martial Artist: 'Work hard and the body will follow.'");
+      player.npcsVisited["martialArtist"] = true;
+    },
+  },
+  denBoss: {
+    id: "denBoss",
+    name: "Bogdu",
+    type: "questgiver",
+    dialogue: "The house always wins.",
+    onTalk(player) {
+      log("Martial Artist: 'Work hard and the money will follow.'");
+      player.npcsVisited["denBoss"] = true;
+    },
+  },
+  ancestorSpirit: {
+    id: "ancestorSpirit",
+    name: "Ancestor spirit",
+    type: "story",
+    dialogue: "I am your great great great great great grandfather",
+    onTalk(player) {
+      if (player.ancestorSpirit <= 50) {
+        log(
+          "Ancestor Spirit: The state of our final resting place is shameful..",
+        );
+      } else if (player.ancestorSpirit >= 50) {
+        log("You honor your ancestors. You have our blessing.");
+      }
+      player.npcsVisited["ancestorSpirit"] = true;
     },
   },
 };
@@ -204,6 +301,41 @@ const ROOMS = {
       bossId: null,
     },
   },
+  teaHouse: {
+    id: "teaHouse",
+    areaId: "area0",
+    name: "Tea House",
+    description: "A quiet teahouse off the main road. It has seen better days.",
+    color: "#3a4a2a",
+    state: "locked",
+    unlockCondition: () => playerState.roomsCleared["area0_alley"] === true,
+    contents: {
+      npcId: "teaMaster",
+      eventId: null,
+      encounterId: null,
+      bossId: null,
+    },
+    hasIncome: true,
+    upgradeIds: ["teaUp1", "teaUp2", "teaUp3", "teaUp4", "teaUp5"],
+  },
+  dojo: {
+    id: "dojo",
+    areaId: "area0",
+    name: "Dojo",
+    description: "A training hall. Dusty but full of potential.",
+    color: "#4a3a2a",
+    state: "locked",
+    unlockCondition: () => playerState.npcsVisited["trainer1"] === true,
+    contents: {
+      npcId: "martialArtist",
+      eventId: null,
+      encounterId: null,
+      bossId: null,
+    },
+    hasIncome: false,
+    upgradeIds: ["dojoUp1"],
+  },
+
   // AREA1 SHADOWCLAN /INNER CITY
   area1_east: {
     id: "area1_east",
@@ -251,7 +383,78 @@ const ROOMS = {
       bossId: "shadowClanBoss",
     },
   },
+  gamblingDen: {
+    id: "gamblingDen",
+    areaId: "area1",
+    name: "Gambling Den",
+    description: "A dimly lit den full of shady characters.",
+    color: "#2a1a3a",
+    state: "locked",
+    unlockCondition: () => true, //playerState.roomsCleared["area1_mansion"] === true, REMOVE! = //
+    contents: {
+      npcId: "denBoss",
+      eventId: null,
+      encounterId: null,
+      bossId: null,
+    },
+    hasIncome: true,
+    upgradeIds: ["gamblingUp1", "gamblingUp2", "gamblingUp3"],
+  },
+  arena: {
+    id: "arena",
+    areaId: "area1",
+    name: "Fight Club / Arena",
+    description: "The crowd roars. Someone always bleeds here.",
+    color: "#3a1a1a",
+    state: "locked",
+    unlockCondition: () => playerState.fame >= 500,
+    contents: {
+      npcId: "fightFanatic",
+      eventId: null,
+      encounterId: null,
+      bossId: null,
+    },
+    hasIncome: false,
+    upgradeIds: ["arenaUp1", "arenaUp2"],
+  },
+  //Area 2 OceanPeak
+  tradingDocks: {
+    id: "tradingDocks",
+    areaId: "area2",
+    name: "Trading Docks",
+    description: "Ships from distant lands unload their cargo here.",
+    color: "#2a2a3a",
+    state: "locked",
+    unlockCondition: () => true, //playerState.worldUnlocks.area2Conquered === true, REMOVE
+    contents: {
+      npcId: "dockMaster",
+      eventId: null,
+      encounterId: null,
+      bossId: null,
+    },
+    hasIncome: true,
+    upgradeIds: ["tradeUp1", "tradeUp2", "tradeUp3", "tradeUp4"],
+  },
+  //Area 3 West placeholder
+  ancestralGrounds: {
+    id: "ancestralGrounds",
+    areaId: "area3",
+    name: "Ancestral Grounds",
+    description: "Sacred land where the old ones rest.",
+    color: "#2a1a2a",
+    state: "locked",
+    unlockCondition: () => true, //playerState.worldUnlocks.area3Conquered === true, REMOVE LATER
+    contents: {
+      npcId: "ancestorSpirit",
+      eventId: null,
+      encounterId: null,
+      bossId: null,
+    },
+    hasIncome: false,
+    upgradeIds: ["ancUp1", "ancUp2"],
+  },
 };
+
 //AREA DEFINITIONS
 
 const AREAS = {
@@ -267,6 +470,8 @@ const AREAS = {
       "area0_commerce",
       "area0_mountain",
       "area0_alley",
+      "teaHouse",
+      "dojo",
     ],
   },
   area1: {
@@ -277,7 +482,13 @@ const AREAS = {
     color: AREA_COLORS.area1,
     isUnlocked: () => playerState.worldUnlocks.area1Unlocked,
     isSafeZone: false,
-    roomIds: ["area1_east", "area1_entertainment", "area1_mansion"],
+    roomIds: [
+      "area1_east",
+      "area1_entertainment",
+      "area1_mansion",
+      "gamblingDen",
+      "arena",
+    ],
   },
   area2: {
     id: "area2",
@@ -286,7 +497,7 @@ const AREAS = {
     color: AREA_COLORS.area2,
     isUnlocked: () => playerState.worldUnlocks.area2Unlocked,
     isSafeZone: false,
-    roomIds: [],
+    roomIds: ["tradingDocks"],
   },
   area3: {
     id: "area3",
@@ -295,12 +506,12 @@ const AREAS = {
     color: AREA_COLORS.area3,
     isUnlocked: () => playerState.worldUnlocks.area3Unlocked,
     isSafeZone: false,
-    roomIds: [],
+    roomIds: ["ancestralGrounds"],
   },
 
   area4: {
     id: "area4",
-    name: "",
+    name: "North Placeholder",
     description: "Placeholder.",
     color: AREA_COLORS.area4,
     isUnlocked: () => playerState.worldUnlocks.area4Unlocked,
