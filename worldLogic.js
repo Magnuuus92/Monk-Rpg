@@ -351,6 +351,96 @@ const ROOM_ACTIONS = {
   },
 };
 //HEREIAM PERFORM ROOM ACTIONS
+function perfromRoomAction(roomId, actionKey) {
+  const actions = ROOM_ACTIONS(actionKey);
+  if (!actions) return;
+  const actions = actions[actionKey];
+  if (!action) return;
+
+  //check availability
+  if (!action.available()) {
+    log("Not possible right now.");
+    render();
+    return;
+  }
+  //DP CHECK
+  if (!spendDP(action.dpCost)) return;
+  //resource cost CHECK
+  if (action.resourceCost > 0 && playerState.resources < action.resourceCost) {
+    playerState.dayPoints += action.dpCost; //refund dp
+    log(`Not enough resources. Need ${action.resourceCost}.`);
+    render();
+    return;
+  }
+  //Gold CHECK
+  if (action.goldCost > 0 && playerState.gold < action.goldCost) {
+    playerState.dayPoints += action.dpCost; //refund dp
+    log(`Not enough gold. Need ${action.goldCost}.`);
+    render();
+    return;
+  }
+  action.execute();
+  render();
+}
+//Purchase upgrade
+function purchaseUpgrade(upgradeKey) {
+  const upgrade = UPGRADES[upgradeKey];
+  if (!upgrade) return;
+  if (playerState.upgrades[upgradeKey]) {
+    log("Already upgraded.");
+    return;
+  }
+  if (!upgrade.requires()) {
+    log(`Requirements not met for upgrade ${upgrade.name}`);
+    render();
+    return;
+  }
+  if (playerState.gold < upgrade.goldCost) {
+    log(`Not enough gold. Need ${upgrade.goldCost}`);
+    render();
+    return;
+  }
+  // on purchase effects (nothing yet)
+  if (upgrade.onPurchase) upgrade.onPurchase();
+  render();
+}
+//INCOME COLLECTION
+function canCollectIncome(roomId) {
+  const lastDay = playerState.lastCollected[roomId] || 0;
+  if (lastDay >= playerState.day) return false;
+  if (roomId === "teaHouse") {
+    return (
+      playerState.renovateCounts.teaHouse >= 10 && playerState.upgrades.teaUp1
+    );
+  }
+  if (roomId === "gamblingDen") {
+    return (
+      playerState.renovateCounts.gamblingDen >= 10 && playerState.gamblingUp1
+    );
+  }
+  if (roomId === "tradingDocks") {
+    return playerState.renovateCounts.tradingDocks >= 10;
+  }
+  return false;
+}
+function collectIncome(roomId) {
+  if (!canCollectIncome(roomId)) {
+    log("No income to collect yet.");
+    render();
+    return;
+  }
+  let goldGain = 0;
+  let resourceGain = 0;
+  const fame = playerState.fame;
+
+  if (roomId === "teaHouse") {
+    if (fame < 500) goldGain = randBetween(6, 25);
+    else if (fame >= 500 && fame < 1000) goldGain = randBetween(20, 30);
+    else goldGain = randBetween(35, 50);
+    if (playerState.upgrades.teaUp5) resourceGain = randBetween(1, 5);
+  } // hereiam
+}
+
 // WANDER ACTION (dp cost)
 function wanderTown() {
   if (!spendDP(1)) return;
