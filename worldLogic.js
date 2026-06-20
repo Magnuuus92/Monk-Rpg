@@ -350,7 +350,7 @@ const ROOM_ACTIONS = {
     },
   },
 };
-//HEREIAM PERFORM ROOM ACTIONS
+
 function perfromRoomAction(roomId, actionKey) {
   const actions = ROOM_ACTIONS(actionKey);
   if (!actions) return;
@@ -438,7 +438,43 @@ function collectIncome(roomId) {
     else if (fame >= 500 && fame < 1000) goldGain = randBetween(20, 30);
     else goldGain = randBetween(35, 50);
     if (playerState.upgrades.teaUp5) resourceGain = randBetween(1, 5);
-  } // hereiam
+  }
+  if (roomId === "gamblingDen") {
+    const up2 = playerState.upgrades.gamblingUp2;
+    const up3 = playerState.upgrades.gamblingUp3;
+    if (fame < 800) {
+      goldGain = up2 ? randBetween(12, 30) : randBetween(10, 25);
+    } else if (fame < 1500) {
+      goldGain = up2 ? randBetween(35, 50) : randBetween(30, 40);
+    } else {
+      if (up2 && up3) goldGain = randBetween(50, 200);
+      else if (up2) goldGain = randBetween(50, 145);
+      else goldGain = randBetween(30, 100);
+    }
+  }
+  if (roomId === "tradingDocks") {
+    resourceGain = 20;
+  }
+  playerState.gold += goldGain;
+  playerState.resources += resourceGain;
+  playerState.lastCollected[roomId] += playerState.day;
+
+  let msg = `Income collected from ${ROOMS[roomId].name}.`;
+  if (goldGain > 0) msg += ` +${goldGain} gold.`;
+  if (resourceGain > 0) msg += ` +${resourceGain} resources.`;
+  log(msg);
+  render();
+}
+function degradeAncestorHappiness() {
+  if (playerState.ancestorHappiness > 0) {
+    playerState.ancestorHappiness = Math.max(
+      0,
+      playerState.ancestorHappiness - 5,
+    );
+  }
+}
+function ancestorsArePleased() {
+  return playerState.ancestorHappiness > 49;
 }
 
 // WANDER ACTION (dp cost)
