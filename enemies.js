@@ -321,6 +321,19 @@ const SHADOW_CLAN = {
     goldMax: 0,
     fameReward: 3,
   },
+  scKarambe: {
+    name: "SC Boss 'Karambe'",
+    hp: 500,
+    maxHp: 500,
+    str: 20,
+    ap: 1,
+    maxAp: 1,
+    moves: ["lunge", "lashOut", "uppercut", "motivateAll"],
+    xpReward: 60,
+    goldMin: 200,
+    goldMax: 200,
+    fameReward: 10,
+  },
 };
 const AFTERLIFE_CULT = {
   alcHenchman: {

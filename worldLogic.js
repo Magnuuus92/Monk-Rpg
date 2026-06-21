@@ -184,7 +184,7 @@ const ROOM_ACTIONS = {
       goldCost: 0,
       available: () => playerState.resources >= 15,
       execute() {
-        playerState.resources -= 5;
+        playerState.resources -= 15;
         playerState.renovateCounts.gamblingDen += 1;
         incrementCounter("physLabour", 1);
         const count = playerState.renovateCounts.gamblingDen;
@@ -278,9 +278,9 @@ const ROOM_ACTIONS = {
       available: () => playerState.resources >= 12,
       execute() {
         playerState.resources -= 12;
-        playerState.renovateCounts.arena += 1;
+        playerState.renovateCounts.tradingDocks += 1;
         incrementCounter("physLabour", 1);
-        const count = playerState.renovateCounts.docks;
+        const count = playerState.renovateCounts.tradingDocks;
         log(`Docks renovated. (${count}/10 until fully functional.)`);
       },
     },
@@ -320,7 +320,7 @@ const ROOM_ACTIONS = {
       dpCost: 1,
       resourceCost: 20,
       goldCost: 0,
-      available: () => true,
+      available: () => playerState.resources >= 20,
       execute() {
         playerState.resources -= 20;
         playerState.renovateCounts.ancestralGrounds += 1;
@@ -351,10 +351,10 @@ const ROOM_ACTIONS = {
   },
 };
 
-function perfromRoomAction(roomId, actionKey) {
-  const actions = ROOM_ACTIONS(actionKey);
+function performRoomAction(roomId, actionKey) {
+  const actions = ROOM_ACTIONS[roomId];
   if (!actions) return;
-  const actions = actions[actionKey];
+  const action = actions[actionKey];
   if (!action) return;
 
   //check availability
@@ -400,6 +400,10 @@ function purchaseUpgrade(upgradeKey) {
     render();
     return;
   }
+  playerState.gold -= upgrade.goldCost;
+  playerState.upgrades[upgradeKey] = true;
+  log(`Purchased: ${upgrade.name}.`);
+
   // on purchase effects (nothing yet)
   if (upgrade.onPurchase) upgrade.onPurchase();
   render();
@@ -415,7 +419,8 @@ function canCollectIncome(roomId) {
   }
   if (roomId === "gamblingDen") {
     return (
-      playerState.renovateCounts.gamblingDen >= 10 && playerState.gamblingUp1
+      playerState.renovateCounts.gamblingDen >= 10 &&
+      playerState.upgrades.gamblingUp1
     );
   }
   if (roomId === "tradingDocks") {
@@ -457,7 +462,7 @@ function collectIncome(roomId) {
   }
   playerState.gold += goldGain;
   playerState.resources += resourceGain;
-  playerState.lastCollected[roomId] += playerState.day;
+  playerState.lastCollected[roomId] = playerState.day;
 
   let msg = `Income collected from ${ROOMS[roomId].name}.`;
   if (goldGain > 0) msg += ` +${goldGain} gold.`;
@@ -490,7 +495,13 @@ function wanderTown() {
 //player choose to engage wander encounter
 function engageWanderEvent() {
   const event = playerState.wanderEvent;
-  if (!event || !event.canFight) return;
+  if (!event) return;
+  if (!event.canFight) {
+    if (event.onResolve) event.onResolve();
+    playerState.wanderEvent = null;
+    render();
+    return;
+  }
   playerState.wanderEvent = null;
   playerState.currentAreaId = "area0";
 
@@ -525,12 +536,19 @@ function ignoreWanderEvent() {
 // Room encounter (trigger combat from room)
 function engageRoomEncounter(roomId) {
   const room = ROOMS[roomId];
-  if (!room || !room.contents.encounterId) return;
+  if (!room) return;
+  const encounterId = room.contents.encounterId || room.contents.bossId;
+  if (!encounterId) return;
   // These encounters are subject to change. (encounter table later)
   const encounterMap = {
+    alleyAmbush: () => [
+      createEnemy(SHADOW_CLAN.scHenchman),
+      createEnemy(SHADOW_CLAN.scWeakling),
+    ],
     shadowClanPatrol: () => [
       createEnemy(SHADOW_CLAN.scHenchman),
       createEnemy(SHADOW_CLAN.scWeakling),
+      createEnemy(SHADOW_CLAN.scHenchman),
     ],
     shadowClanElite: () => [
       createEnemy(SHADOW_CLAN.scNinja),
@@ -544,6 +562,7 @@ function engageRoomEncounter(roomId) {
       createEnemy(SHADOW_CLAN.scLieutenant),
       createEnemy(SHADOW_CLAN.scHenchman),
       createEnemy(SHADOW_CLAN.scHenchman),
+      createEnemy(SHADOW_CLAN.scKarambe),
     ],
   };
   const buildFn = encounterMap[room.contents.encounterId];

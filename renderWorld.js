@@ -120,7 +120,7 @@ function renderRoom(roomId) {
         margin-bottom: 16px;
         border-radius: 4px;
     `;
-  // const actions = renderRoomActions(room, cleared); REMOVE THIS!
+
   app.innerHTML = `
     <h1>${room.name}</h1>
     ${renderWorldStatusBar()}
@@ -134,7 +134,7 @@ function renderRoom(roomId) {
      <p> ${room.description} </p>
      <hr />
      <div id="room-actions">
-     ${actions}
+     ${renderRoomContent(room, cleared)}
      </div>
      <hr />
      <div id="log">
@@ -155,7 +155,7 @@ function renderRoomContent(room, cleared) {
   }
   if (room.contents.bossId && !cleared) {
     parts.push(`<h3> BOSS </h3>
-      <button onclick="engageRoomEncounter"('${room.id}')">Fight Boss</button>
+      <button onclick="engageRoomEncounter('${room.id}')">Fight Boss</button>
       <hr />
       `);
   }
@@ -175,13 +175,12 @@ function renderRoomContent(room, cleared) {
   const actions = ROOM_ACTIONS[room.id];
   if (actions) {
     parts.push(`<h3>Actions</h3>`);
-    Object.entries(actions).forEach(([key, actions]) => {
+    Object.entries(actions).forEach(([key, action]) => {
       const canDo =
-        actions.available() && playerState.dayPoints >= actions.dpCost;
-      const costParts = [`${actions.dpCost} DP`];
-      if (action.resourceCost > 0)
-        costParts.push(`${actions.resourceCost} res`);
-      if (action.goldCost > 0) costParts.push(`${actions.goldCost} gold`);
+        action.available() && playerState.dayPoints >= action.dpCost;
+      const costParts = [`${action.dpCost} DP`];
+      if (action.resourceCost > 0) costParts.push(`${action.resourceCost} res`);
+      if (action.goldCost > 0) costParts.push(`${action.goldCost} gold`);
       parts.push(`
         <div class="action-row">
         <button ${canDo ? "" : "disabled"}
@@ -233,14 +232,14 @@ function renderIncomeSection(room) {
   const collectedToday = lastDay >= playerState.day;
   //Show unlock req
   if (!ready && !collectedToday) {
-    let Requirements = "";
+    let requirements = "";
     if (roomId === "teaHouse") {
       const rCount = playerState.renovateCounts.teaHouse;
-      Requirements = `Renovate ${rCount}/10 times + purchase first upgrade.`;
+      requirements = `Renovate ${rCount}/10 times + purchase first upgrade.`;
     }
     if (roomId === "gamblingDen") {
       const rCount = playerState.renovateCounts.gamblingDen;
-      Requirements = `Renovate ${rCount}/10 times + purchase first upgrade.`;
+      requirements = `Renovate ${rCount}/10 times + purchase first upgrade.`;
     }
     if (roomId === "tradingDocks") {
       const rCount = playerState.renovateCounts.tradingDocks;
@@ -333,7 +332,7 @@ function renderWanderEventPanel(event) {
   return `
     <div class="eventPanel">
     <strong>Event:</strong> ${event.description}<br/><br/>
-    ${event.canFight || event.onResolve ? actionBtn : ""}
+    ${event.canFight || event.onResolve ? fightBtn : ""}
     <button onclick="ignoreWanderEvent()">Walk Away</button>
     </div>
     <hr />

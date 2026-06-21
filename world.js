@@ -79,7 +79,7 @@ const UPGRADES = {
     name: "Northern cardgames",
     description: "Exotic card games that attracts new customers.",
     goldCost: 1,
-    requires: () => playerState.socialUnlocks.northernCards,
+    requires: () => playerState.socialUnlocks.northernCard,
   },
   arenaUp1: {
     key: "arenaUp1",
@@ -221,17 +221,40 @@ const NPCS = {
       player.npcsVisited["denBoss"] = true;
     },
   },
+  fightFanatic: {
+    id: "fightFanatic",
+    name: "Fight Fanatic",
+    type: "story",
+    dialogue: "I love a good fight!",
+    onTalk(player) {
+      log("Fight Fanatic: 'The crowd loves a good show. Give them one.'");
+      player.npcsVisited["fightFanatic"] = true;
+    },
+  },
+  dockMaster: {
+    id: "dockMaster",
+    name: "Dock Master",
+    type: "shop",
+    dialogue: "Everything comes through here sooner or later.",
+    onTalk(player) {
+      log(
+        "Dock Master: 'Resources for sale, 5 gold each. Buy or sell?' (Not yet implemented.)",
+      );
+      player.npcsVisited["dockMaster"] = true;
+    },
+  },
+
   ancestorSpirit: {
     id: "ancestorSpirit",
     name: "Ancestor spirit",
     type: "story",
     dialogue: "I am your great great great great great grandfather",
     onTalk(player) {
-      if (player.ancestorSpirit <= 50) {
+      if (player.ancestorHapiness <= 50) {
         log(
           "Ancestor Spirit: The state of our final resting place is shameful..",
         );
-      } else if (player.ancestorSpirit >= 50) {
+      } else if (player.ancestorHapiness >= 50) {
         log("You honor your ancestors. You have our blessing.");
       }
       player.npcsVisited["ancestorSpirit"] = true;
