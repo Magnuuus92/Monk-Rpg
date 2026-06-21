@@ -120,7 +120,7 @@ function renderRoom(roomId) {
         margin-bottom: 16px;
         border-radius: 4px;
     `;
-  const actions = renderRoomActions(room, cleared);
+  // const actions = renderRoomActions(room, cleared); REMOVE THIS!
   app.innerHTML = `
     <h1>${room.name}</h1>
     ${renderWorldStatusBar()}
@@ -142,6 +142,151 @@ function renderRoom(roomId) {
      </div>
      `;
 }
+//Render inside rooms override
+function renderRoomContent(room, cleared) {
+  const parts = [];
+  // Combat & boss
+  if (room.contents.encounterId && !cleared) {
+    parts.push(`            <h3>Enemies</h3>
+            <button onclick="engageRoomEncounter('${room.id}')">Engage Enemies</button>
+            <hr />
+
+    `);
+  }
+  if (room.contents.bossId && !cleared) {
+    parts.push(`<h3> BOSS </h3>
+      <button onclick="engageRoomEncounter"('${room.id}')">Fight Boss</button>
+      <hr />
+      `);
+  }
+  if (cleared && (room.contents.encounterId || room.contents.bossId)) {
+    parts.push(`<p><em>Enemies defeated.</em></p><hr />`);
+  }
+  //NPCs
+  if (room.contents.npcId) {
+    const npc = NPCS[room.contents.npcId];
+    parts.push(`
+            <h3>NPC</h3>
+            <button onclick="talkToNpc('${npc.id}')">Talk to ${npc.name}</button>
+            <hr />
+        `);
+  }
+  //repeatable actions
+  const actions = ROOM_ACTIONS[room.id];
+  if (actions) {
+    parts.push(`<h3>Actions</h3>`);
+    Object.entries(actions).forEach(([key, actions]) => {
+      const canDo =
+        actions.available() && playerState.dayPoints >= actions.dpCost;
+      const costParts = [`${actions.dpCost} DP`];
+      if (action.resourceCost > 0)
+        costParts.push(`${actions.resourceCost} res`);
+      if (action.goldCost > 0) costParts.push(`${actions.goldCost} gold`);
+      parts.push(`
+        <div class="action-row">
+        <button ${canDo ? "" : "disabled"}
+        onclick="performRoomAction('${room.id}', '${key}')">
+        ${action.label} <small>(${costParts.join(", ")})</small>
+        </button>
+        <small>${action.description}</small>
+        </div>
+        `);
+    });
+    parts.push(`<hr />`);
+  }
+  //INCOME Collect
+  if (room.hasIncome) {
+    parts.push(`<h3>Income</h3>`);
+    parts.push(renderIncomeSection(room));
+    parts.push(`<hr />`);
+  }
+  //UPGRADES
+  if (room.upgradeIds && room.upgradeIds.length > 0) {
+    parts.push(`<h3>Upgrades</h3>`);
+    parts.push(renderUpgrades(room.upgradeIds));
+    parts.push(`<hr />`);
+  }
+  if (room.id === "ancestralGrounds") {
+    const pct = playerState.ancestorHappiness;
+    const status =
+      pct > 49
+        ? "Pleased ancestors - Ancestor blessing available"
+        : "Your ancestors are not pleased - Increase the happiness by tending to their graves.";
+    parts.push(`
+      <h3>Ancestor Happiness</h3>
+      <p>${pct}/100 — ${status}</p>
+      <div style="background:#333; border-radius:4px; height:12px; width:100%;">
+      <div style="background:#6a6; border-radius:4px; height:12px; width:${pct}%;"></div>
+      </div>
+      <hr />
+`);
+  }
+  return parts.length > 0
+    ? parts.join("")
+    : "<p><em>Nothing to do here</em></p>";
+}
+//INCOME SECTION
+function renderIncomeSection(room) {
+  const roomId = room.id;
+  const ready = canCollectIncome(roomId);
+  const lastDay = playerState.lastCollected[roomId] || 0;
+  const collectedToday = lastDay >= playerState.day;
+  //Show unlock req
+  if (!ready && !collectedToday) {
+    let Requirements = "";
+    if (roomId === "teaHouse") {
+      const rCount = playerState.renovateCounts.teaHouse;
+      Requirements = `Renovate ${rCount}/10 times + purchase first upgrade.`;
+    }
+    if (roomId === "gamblingDen") {
+      const rCount = playerState.renovateCounts.gamblingDen;
+      Requirements = `Renovate ${rCount}/10 times + purchase first upgrade.`;
+    }
+    if (roomId === "tradingDocks") {
+      const rCount = playerState.renovateCounts.tradingDocks;
+      requirements = `Renovate ${rCount}/10 times`;
+    }
+    return `<p><em>Income locked. Requirements: ${requirements}</em></p>`;
+  }
+  if (collectedToday) {
+    return `<p><em>Income already collected today. Come back tomorrow.</em></p>`;
+  }
+  return `<p> Daily income is ready to collect!</p>
+<button onclick="collectIncome('${roomId}')">Collect income</button>`;
+}
+function renderUpgrades(upgradeIds) {
+  return upgradeIds
+    .map((key) => {
+      const upgrade = UPGRADES[key];
+      const purchased = playerState.upgrades[key];
+      const canBuy =
+        !purchased &&
+        upgrade.requires() &&
+        playerState.gold >= upgrade.goldCost;
+
+      return `
+    <div class="upgrade-row">
+    <strong>${upgrade.name}</strong>
+    ${purchased ? "<small>Purchased</small>" : ""}
+    <br/>
+    <small>${upgrade.description}</small></br>
+    ${
+      purchased
+        ? ""
+        : `<button ${canBuy ? "" : "disabled"} onclick="purchaseUpgrade('${key}')">
+      Buy <small>(${upgrade.goldCost} gold)</small>
+      </button>
+      ${
+        !upgrade.requires()
+          ? `<small><em> Requirements not met.</em></small>`
+          : ""
+      }`
+    }
+    </div>`;
+    })
+    .join("");
+}
+
 function renderRoomActions(room, cleared) {
   const parts = [];
   //NPC
@@ -184,11 +329,11 @@ function renderRoomActions(room, cleared) {
 function renderWanderEventPanel(event) {
   const fightBtn = event.canFight
     ? `<button onclick="engageWanderEvent()">Engage</button>`
-    : "";
+    : `<button onclick="engageWanderEvent()">Resolve</button>`;
   return `
     <div class="eventPanel">
     <strong>Event:</strong> ${event.description}<br/><br/>
-    ${fightBtn}
+    ${event.canFight || event.onResolve ? actionBtn : ""}
     <button onclick="ignoreWanderEvent()">Walk Away</button>
     </div>
     <hr />
@@ -203,7 +348,9 @@ function renderWorldStatusBar() {
             <span>DP: ${p.dayPoints}/${p.maxDayPoints}</span> |
             <span>HP: ${p.hp}/${p.maxHp}</span> |
             <span>Gold: ${p.gold}</span> |
-            <span>Level: ${p.level}</span>
+            <span>Resources: ${p.resources}</span>|
+            <span>Fame: ${p.fame}</span>
+            <span>Level: ${p.level}</span> |
         </div>
 `;
 }
