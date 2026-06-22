@@ -523,6 +523,8 @@ function engageWanderEvent() {
     timeDabbleUses: 0,
     pendingSkill: null,
     accumulatedEnergy: 0,
+    sourceRoomId: room.id,
+    isBossFight: !!room.contents.bossId,
     log: [`${event.description} Turn 1.`],
   };
   render();

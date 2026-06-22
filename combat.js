@@ -422,6 +422,8 @@ function fightTestDummy() {
     timeDabbleUses: 0,
     pendingSkill: null,
     accumulatedEnergy: 0,
+    sourceRoomId: room.id,
+    isBossFight: !!room.contents.bossId,
     log: [`testing turn 1`],
   };
   render();
