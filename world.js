@@ -319,8 +319,8 @@ const ROOMS = {
     unlockCondition: () => playerState.npcsVisited["mayor"] === true,
     contents: {
       npcId: null,
-      eventId: "alleyAmbush",
-      encounterId: null,
+      eventId: null,
+      encounterId: "alleyAmbush",
       bossId: null,
     },
   },
@@ -515,8 +515,9 @@ const AREAS = {
   },
   area2: {
     id: "area2",
-    name: "Afterlife Cult Grounds",
-    description: "Placeholder.",
+    name: "Ocean Peak",
+    description:
+      "South of cityName. Ocean peak rests atop of cliffs overlooking the sea. In the north there are 2 graveyards, to the south are the docks.",
     color: AREA_COLORS.area2,
     isUnlocked: () => playerState.worldUnlocks.area2Unlocked,
     isSafeZone: false,
@@ -524,7 +525,7 @@ const AREAS = {
   },
   area3: {
     id: "area3",
-    name: "Ancient Burial Grounds",
+    name: "West cityName",
     description: "Placeholder.",
     color: AREA_COLORS.area3,
     isUnlocked: () => playerState.worldUnlocks.area3Unlocked,
@@ -534,7 +535,7 @@ const AREAS = {
 
   area4: {
     id: "area4",
-    name: "North Placeholder",
+    name: "North cityName",
     description: "Placeholder.",
     color: AREA_COLORS.area4,
     isUnlocked: () => playerState.worldUnlocks.area4Unlocked,

@@ -314,12 +314,15 @@ function startCombat(areaIndex) {
     timeDabbleUses: 0,
     pendingSkill: null,
     accumulatedEnergy: 0,
+    sourceRoomId: room.id,
+    isBossFight: !!room.contents.bossId,
     log: [`Combat begins. Turn 1.`],
   };
   render();
 }
 
 function endCombat(victory) {
+  const combat = playerState.combat;
   if (victory) {
     let totalXp = 0;
     let totalGold = 0;
@@ -335,6 +338,21 @@ function endCombat(victory) {
     playerState.fame += totalFame;
     log(`Victory! Gained ${totalXp} Exp and ${totalGold} gold.`);
     checkLevelUp();
+    //Old system might remove later on.
+    if (playerState.currentArea !== null) {
+      playerState.areasConquered[playerState.currentArea] = true;
+    }
+    if (combat && combat.sourceRoomId) {
+      markRoomCleared(combat.sourceRoomId);
+      if (combat.isBossFight) {
+        const room = ROOMS[combat.sourceRoomId];
+        const conqueredKey = `${room.areaId}Conquered`;
+        if (conqueredKey in playerState.worldUnlocks) {
+          playerState.worldUnlocks[conqueredKey] = true;
+          log(`${AREAS[room.areaId].name} has been conquered!`);
+        }
+      }
+    }
     //playerState.areasConquered[playerState.currentArea] = true; BOSS will have this!
   } else {
     log("Defeated you respawn at base.");
