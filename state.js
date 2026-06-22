@@ -29,7 +29,7 @@ const playerState = {
   gold: 10,
   fame: 0,
   resources: 0,
-  ancestorHapiness: 0,
+  ancestorHappiness: 0,
   skills: {
     //force branch
     a1: false,
@@ -85,7 +85,7 @@ const playerState = {
     neighbourKids: false,
     trainingGear: false,
   },
-  roomUpgrades: {
+  upgrades: {
     teaUp1: false,
     teaUp2: false,
     teaUp3: false,
