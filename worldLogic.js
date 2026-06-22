@@ -565,7 +565,7 @@ function engageRoomEncounter(roomId) {
       createEnemy(SHADOW_CLAN.scKarambe),
     ],
   };
-  const buildFn = encounterMap[room.contents.encounterId];
+  const buildFn = encounterMap[encounterId];
   if (!buildFn) return;
 
   playerState.hp = playerState.maxHp; // Subject to change?
@@ -585,6 +585,8 @@ function engageRoomEncounter(roomId) {
     timeDabbleUses: 0,
     pendingSkill: null,
     accumulatedEnergy: 0,
+    sourceRoomId: room.id,
+    isBossFight: !!room.contents.bossId,
     log: [`You engage enemies in ${room.name}. Turn 1.`],
   };
   render();
