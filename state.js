@@ -5,9 +5,9 @@ function getDerivedStats(stats) {
   };
 }
 const baseStats = {
-  strength: 5,
-  dexterity: 5,
-  vitality: 5,
+  strength: 25,
+  dexterity: 25,
+  vitality: 25,
   resilience: 5,
   willpower: 5,
   intellect: 5,
