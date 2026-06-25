@@ -41,10 +41,11 @@ function rest() {
   render();
 }
 // TRAIN for xp
-function train() {
+function train() {//HERE
   if (!spendDP(1)) return;
-  const xpGain = 1000;
+  const xpGain = 20;
   playerState.experience += xpGain;
+  playerState.counters.harnessPow += 1;
   log(`You sharpen your skills. Gained ${xpGain} Experience.`);
   checkLevelUp();
   render();

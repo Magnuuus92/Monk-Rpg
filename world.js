@@ -565,9 +565,13 @@ const WANDER_EVENTS = [
     canFight: true,
     encounter: () => [createEnemy(SHADOW_CLAN.debris)], //uncertain about this one.
   },
-  {
+  {//HERE
     id: "nothing",
     description: "You had a pleasant and uneventful stroll.",
+    execute() {
+incrementCounter("physLabour", 1);
+    },
+    
     canFight: false,
   },
 ];
