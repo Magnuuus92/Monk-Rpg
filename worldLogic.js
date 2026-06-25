@@ -593,3 +593,57 @@ function engageRoomEncounter(roomId) {
   };
   render();
 }
+function markRoomCleared(roomId) {
+  if(!roomId) return;
+  playerState.roomsCleared[roomId] = true;
+  if(playerState.currentAreaId) refreshRoomStates(playerState.currentAreaId);
+}
+function startArenaBattle() {
+  const maxEnemies = playerState.upgrades.arenaUp2 ? 7 : 3;
+  //random encounter from SHADOW_CLAN enemies. might do selection down the line
+  const pool = object.values(SHADOW_CLAN).filter(e => e.name !== "Test Dummy");
+  const shuffled = pool.sort(() => Math.random() - 0.5);
+  const enemies = shuffled.slice(0, maxEnemies).map(createEnemy);
+
+  playerState.hp = playerState.maxHp;
+  playerState.energy = playerState.maxEnergy;
+
+  playerState.combat = {
+    enemies: enemies,
+    turn: 1,
+    actionPoints: 2 + (playerState.skills.r6 ? 1 : 0),
+    maxAp: 2 + (playerState.skills.r6 ? 1 : 0),
+    alertStance: false,
+    result: null,
+    block: 0,
+    blockCarryover: 0,
+    strikeCount: 0,
+    flatDmgBonus: 0,
+    timeDabbleUses: 0,
+    pendingSkill: null,
+    accumulatedEnergy: 0,
+    sourceRoomId: "arena", //UNSURE about this one
+    isBossFight: false,
+    log: [`You enter the arena. Turn 1.`],
+  };
+  render();
+}
+function randBetween(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+function trySocialUnlock() {
+  const available = Object.keys(playerState.socialUnlocks).filter(
+    k => !playerState.socialUnlocks[k]
+  );
+  if(available.length === 0){
+    log("You know everything worth knowing about this place.")
+    return;
+  }
+  if (Math.random() < 0.05) {
+    const key = available[Math.floor(Math.random() *available.length)];
+    playerState.socialUnlocks[key] = true;
+    log(`New contract: ${key} unlocked!`);
+  } else {
+    log("You socialize but nothing comes of it.");
+  }
+  }

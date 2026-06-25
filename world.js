@@ -217,7 +217,7 @@ const NPCS = {
     type: "questgiver",
     dialogue: "The house always wins.",
     onTalk(player) {
-      log("Martial Artist: 'Work hard and the money will follow.'");
+      log("Bogdu: 'Work hard and the money will follow.'");
       player.npcsVisited["denBoss"] = true;
     },
   },
@@ -312,7 +312,7 @@ const ROOMS = {
   area0_alley: {
     id: "area0_alley",
     areaId: "area0",
-    name: "Back lley",
+    name: "Back alley",
     description: "A narrow alley. People sometimes get mugged here.",
     color: "#2a2a2a",
     state: "locked",
