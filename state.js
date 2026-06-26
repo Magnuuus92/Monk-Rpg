@@ -120,9 +120,9 @@ const playerState = {
   worldUnlocks: {
     area0Unlocked: true,
     area1Unlocked: false,
-    area2Unlocked: false,
-    area3Unlocked: false,
-    area4Unlocked: false,
+    area2Unlocked: true,
+    area3Unlocked: true,
+    area4Unlocked: true,
     area1Conquered: false,
     area2Conquered: false,
     area3Conquered: false,

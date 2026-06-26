@@ -56,7 +56,7 @@ function renderAreaOverview(areaId) {
       const style = `
         background-color: ${room.color};
         opacity: ${locked ? "0.4" : "1"};
-        height: 120px;
+        height: 80px;
         `;
 
       return `
