@@ -45,3 +45,11 @@ body {
   margin-bottom: 8px;
   background-color: #1a1a1a;
 }
+#nameInput{
+  padding: 6px;
+  margin-right: 8px;
+  background: #1a1a1a;
+  border: 1px solid #444;
+  color: #e0e0e0;
+  border-radius: 4px;
+}
