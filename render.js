@@ -1,4 +1,8 @@
 function render() {
+  if(!playerState.nameSet){
+    renderNameEntry();
+    return;
+  }
   //Router
   if (playerState.combat !== null) {
     renderCombat();
@@ -8,9 +12,20 @@ function render() {
     renderWorld();
   } else if (currentScreen === "saveLoad") {
     renderSaveLoad();
+   } else if (currentScreen === "stats"){
+    renderStats();
   } else {
     renderBase();
   }
+}
+function renderNameEntry(){
+  const app = document.getElementById("app");
+  app.innerHTML = `
+  <h1>GAMEPROJECT</h1>
+  <h2>Name your character</h2>
+  <input type="text" id="nameInput" placeholde="Enter a name" maxlength="20" />
+  <button onclick="confirmPlayerName()">Confirm</button>
+  `;
 }
 
 function renderBase() {
@@ -98,8 +113,12 @@ function renderBaseActions() {
   <button onclick="openSkillTree()">
   Skill Tree (SP: ${playerState.skillPoints})
   </button>
+  <button onclick="currentScreen = 'stats'; render();">Stats</button>
   <button onclick="currentScreen = 'saveLoad'; render();">Save / Load</button> 
   <button onclick="fightTestDummy()">Fight test dummy</button>
+  ${playerState.shopPurchases.scrollBought && playerState.shopPurchases.scrollReadsUsed < 10
+    ? `<button onclick="readScroll()">Read scroll <small>(${playerState.shopPurchases.scrollReadsUsed}/10)</small></button>`
+    : ""}
   <button onclick="endDay()">End Day</button>
   `;
 }

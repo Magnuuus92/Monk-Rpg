@@ -93,7 +93,15 @@ function endDay() {
 function getNextAreaIndex() {
   return playerState.areasConquered.indexOf(false);
 }
-
+//NAMING confirm handler
+function confirmPlayerName() {
+  const input = document.getElementById("nameInput");
+  const name = input.value.trim();
+  playerState.name = name.length > 0 ? name : "Hero";
+  playerState.nameSet = true;
+  log(`Welcome, ${playerState.name}.`);
+  render();
+}
 // CHECK LVLUP
 function checkLevelUp() {
   while (playerState.experience >= playerState.level * 100) {

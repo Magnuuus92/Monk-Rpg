@@ -14,6 +14,7 @@ const baseStats = {
 };
 const derived = getDerivedStats(baseStats);
 
+
 const playerState = {
   name: "Hero",
   level: 1,
@@ -158,4 +159,26 @@ const playerState = {
     harnessPow: false,
     harnessPow2: false,
   },
+  nameSet: false,
+pets: {
+  hasPet: false,
+  type: null,
+},
+//QUESTS
+quests: {
+  martialArtsTraining: "Locked",
+},
+questProgress: {
+  martialArtistSparCount: 0,
+},
+skillPointPurchases: 0,
+shopPurchases:{
+  pendantBought: false,
+  scrollBought: false,
+  scrollReadsUsed: 0,
+},
+//SPECIFIC 1time events
+eventsTriggered: {
+  petChoice: false,
+}
 };

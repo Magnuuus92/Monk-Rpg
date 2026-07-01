@@ -143,6 +143,9 @@ const ROOM_ACTIONS = {
         incrementCounter("becomeFlex", 1);
         incrementCounter("harnessPow", 1);
         checkLevelUp();
+        if(playerState.quests.martialArtsTraining === "active") {
+          playerState.questProgress.martialArtistSparCount += 1;
+        }
         log("You spar at the dojo +10 exp.");
       },
     },
@@ -218,7 +221,7 @@ const ROOM_ACTIONS = {
       goldCost: 0,
       available: () => true,
       execute() {
-        incrementCounter("broadMind");
+        incrementCounter("broadMind", 1);
         trySocialUnlock();
       },
     },
@@ -350,6 +353,112 @@ const ROOM_ACTIONS = {
     },
   },
 };
+//ROOM DEVELOPMENT
+function isRoomFullyRenovated(roomId){
+  const count = playerState.renovateCounts[roomId];
+  if (count === undefined || count < 10) return false;
+  const room = ROOMS[roomId];
+  if(room.upgradeIds && room.upgradeIds.length > 0){
+    return room.upgradeIds.every(key => playerState.upgrades[key]);
+  }
+  return true;
+}
+//MARTIAL ARTIST Quest
+function startMartialArtistQuest() {
+  if(playerState.quests.martialArtsTraining !== "locked") return;
+  if(!isRoomFullyRenovated("dojo")) {
+    log("The dojo is not yet renovated.");
+    render();
+    return;
+  }
+  playerState.quests.martialArtsTraining = "active";
+  playerState.questProgress.martialArtistSparCount = 0;
+  log("Quest started: Prove your dedication to the martial arts. Spar 5 times at the dojo.");
+  render();
+}
+function turnInMartialArtistQuest() {
+  if(playerState.quests.martialArtsTraining !== "active") return;
+  if(playerState.questProgress.martialArtistSparCount < 5){
+    log("You are not ready yet. Prove your dedication by sparring.");
+    render();
+    return;
+  }
+  playerState.quests.martialArtsTraining = "completed";
+  log("Quest completed! The will now help you learn new skills for a price.");
+  render();
+}
+//SKILLPOINT SHOP martialARTIST
+const SKILL_POINT_PRICES = [50,100,200,300,400,500,600,700,800,900,1000,1200,1500,2000,2500,3000];
+
+function buySkillPoint() {
+  const price =SKILL_POINT_PRICES[playerState.skillPointPurchases];
+  if( price === undefined) {
+    log("The martial Artist has nothing left to teach you.");
+    render();
+    return;
+  }
+  if(playerState.gold < price){
+    log(`Not enough gold. Need ${price}.`);
+    render();
+    return;
+  }
+  playerState.gold -= price;
+  playerState.skillPoints += 1;
+  playerState.skillPointPurchases += 1;
+  log(`Purchased one skillpoint for ${price} gold.`);
+  render();
+}
+//OLDMERCHANT SHOP
+function buyResource(){
+  const cost = 5;
+  if(playerState.gold < cost) {log("Not enough gold."); render(); return;}
+  playerState.gold -= cost;
+  playerState.resources += 1;
+  //log(`Bought 1 resource for ${cost} gold.`) This floods the log.
+  render();
+}
+function buyPendant(){
+  if(playerState.shopPurchases.pendantBought){log("Already Purchased."); return;}
+  const cost = 30;
+  if(playerState.gold < cost) {log("Not enough gold."); render(); return;}
+   playerState.gold -= cost;
+   playerState.shopPurchases.pendantBought = true;
+   log("Purchased the pendant. Use a skillpoint to unlock its true potential.");
+   render();
+}
+function buyScroll() {
+  if(playerState.shopPurchases.scrollBought){log("Already Purchased."); return;}
+  const cost = 500;
+   if(playerState.gold < cost) {log("Not enough gold. This is a very rare scroll. Dont try to haggle."); render(); return;}
+      playerState.gold -= cost;
+   playerState.shopPurchases.scrollBought = true;
+    log("Purchased the scroll. You should study it to learn about its true potential.");
+    render();
+}
+//read scroll at base
+function readScroll(){
+  if (!spendDP(1)) return;
+  if(!playerState.shopPurchases.scrollBought) {log("You dont have the scroll."); render(); return;  }
+  if(playerState.shopPurchases.scrollReadsUsed >= 10){
+    log("You have learned all the scrolls teachings.");
+    render();
+    return;
+  }
+  incrementCounter("broadMind", 1);
+  playerState.shopPurchases.scrollReadsUsed += 1;
+  log(`You study the scroll. (${playerState.shopPurchases.scrollReadsUsed}/10)`);
+  render();
+}
+function choosePet(type){
+  if(playerState.eventsTriggered.petChoice) return;
+  playerState.pets.hasPet = type !== "none";
+  playerState.pets.type = type === "none" ? null : type;
+  playerState.eventsTriggered.petChoice = true;
+  log(type === "none"
+    ? "You decide against taking on a pet right now."
+    : `You have adopted a ${type}! It will stay with you at your base.`);
+  render();
+}
 
 function performRoomAction(roomId, actionKey) {
   const actions = ROOM_ACTIONS[roomId];

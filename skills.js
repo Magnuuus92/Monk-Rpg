@@ -258,17 +258,14 @@ const SKILL_DATA = {
   r5: {
     name: "Unlocked Pendant",
     description: "(Passive) Gain 10 block at the start of every player turn.",
-    requiresText: "WorldReqPlaceholder.",
-    requires: () => false, //placehold
+    requiresText: "Buy a mysterious pendant from an old trader.",
+    requires: () => playerState.shopPurchases.pendantBought,
   },
   r6: {
     name: "Divine Knowledge",
     description: "(Passive) +1 MaxAp",
-    requiresText: "Some scroll Placeholder.",
-    requires: () =>
-      countUnlocked("a") >= 7 &&
-      countUnlocked("b") >= 7 &&
-      countUnlocked("c") >= 7,
+    requiresText: "Study the divine scroll.",
+    requires: () => playerState.shopPurchases.scrollReadsUsed >= 10,
     onUnlock() {
       log("Divine Knowledge: +1 MaxAp.");
     },

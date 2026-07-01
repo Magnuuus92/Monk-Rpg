@@ -220,6 +220,21 @@ function renderRoomContent(room, cleared) {
       <hr />
 `);
   }
+  if(room.id === "dojo"){
+    parts.push(renderMartialArtistQuest());
+  }
+  if(room.id === "area0_commerce"){
+    parts.push(renderMerchantShop());
+  }
+  if(room.id === "area0_alley"
+    && playerState.roomsCleared["area0_alley"]
+    && !playerState.eventsTriggered.petChoice){
+    parts.push(renderPetChoicePanel());
+  }
+  //endday button for fully renov rooms.
+  if(room.isRoomFullyRenovated){
+    parts.push(`<button onclick="endDay()">End day</button>`);
+  }
   return parts.length > 0
     ? parts.join("")
     : "<p><em>Nothing to do here</em></p>";
@@ -361,4 +376,75 @@ function renderWorldLog() {
     .slice(0, 5) // shows last 5 msg in ww
     .map((msg) => `<p>> ${msg}</p>`)
     .join("");
+}
+function renderMartialArtistQuest(){
+  const stage = playerState.quests.martialArtsTraining;
+  const ready = isRoomFullyRenovated("dojo");
+  if(!ready && stage === "locked") return "";
+  if(stage === "locked"){
+    return`
+    <h3>Training offer</h3>
+    <p>The martial artist is pleased with your dedication to the dojo.</p>
+    <button onclick="startMartialArtistQuest()">Begin training</button>
+    <hr />
+    `;
+  }
+  if( stage === "active"){
+    const count = playerState.questProgress.martialArtistSparCount;
+    const done = count >= 5;
+    return `
+    <h3>Quest: Martial prowess</h3>
+    <p>Spar at the dojo. Progress: ${count}/5</p>
+    <button ${done ? "" : "disabled"} onclick="turnInMartialArtistQuest()">Complete Quest</button>
+    <hr />
+    `;
+  }
+  if(stage === "completed"){
+    const price = SKILL_POINT_PRICES[playerState.skillPointPurchases];
+    return`
+    <h3>Skill point training</h3>
+    ${price !== undefined
+      ?`<button ${playerState.gold >= price ? "" : "disabled"} onclick="buySkillPoint()">
+      Buy Skill Point <small>(${price} gold)</small>
+      </button>`
+      :`<p><em>Martial Artist: Theres nothing more I can teach you.</em></p>`
+    }
+    <hr />
+    `;
+  }
+  return "";
+}
+function renderMerchantShop(){
+  const p = playerState;
+  return`
+  <h3>Old Merchants Wares</h3>
+  <div class="upgrade-row">
+  <button onclick="buyResource()">Buy 1 resource <small>(5 gold)</small></button>
+  </div>
+  <div class="upgrade-row">
+  <strong>Prendant</strong> ${p.shopPurchases.pendantBought ? "<small>Purchased</small>" : ""}</br>
+  <small>Can be unlocked with a skillpoint. (r5)</small><br/>
+  ${p.shopPurchases.pendantBought ? "" :
+    `<button ${p.gold >= 30 ? "" : "disabled"} onclick"buyPendant()">Buy <small>(30 gold)</small></button>`}
+    </div>
+    <div class="upgrade-row">
+    <strong>Scroll</strong> ${p.shopPurchases.scrollBought ? "<small>Purchased</small>" : ""}<br/>
+    <small>Read 10 times to unlock its full potential.</small><br/>
+    ${p.shopPurchases.scrollBought ? "" :
+      `<button ${p.gold >= 500 ? "" : "disabled"} onclick="buyScroll()">Buy<small>(500 gold)</small></button>`}
+      </div>
+      <hr />
+      `;
+}
+function renderPetChoicePanel(){
+  return`
+  <div class="event-panel">
+  <strong>A stray animal approaches you in the alley</strong><br/>
+  Take it in as a pet? It will stay at your base.<br/><br/>
+  <button onclick="choosePet('dog')">Take the Dog</button>
+  <button onclick="choosePet('cat')">Take the Cat</button>
+  <button onclick="choosePet('none')">Leave it be</button>
+  </div>
+  <hr />
+  `;
 }
