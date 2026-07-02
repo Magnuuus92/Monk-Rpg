@@ -45,7 +45,7 @@ function train() {//HERE
   if (!spendDP(1)) return;
   const xpGain = 20;
   playerState.experience += xpGain;
-  playerState.counters.harnessPow += 1;
+  incrementCounter("harnessPow", 1);
   log(`You sharpen your skills. Gained ${xpGain} Experience.`);
   checkLevelUp();
   render();
@@ -100,7 +100,17 @@ function confirmPlayerName() {
   playerState.name = name.length > 0 ? name : "Hero";
   playerState.nameSet = true;
   log(`Welcome, ${playerState.name}.`);
+  checkTest();
   render();
+}
+function checkTest() {
+  const p = playerState;
+  if(p.nameSet = true && p.name === "test") {
+    p.skillPoints += 50;
+    p.statPoints += 50;
+    p.gold += 5000;
+    p.resources += 5000;
+  } return;
 }
 // CHECK LVLUP
 function checkLevelUp() {

@@ -12,7 +12,8 @@ function renderStats(){
     Level: ${p.level} |
     XP: ${p.experience}/${xpNeeded} |
     Skill Points: ${p.skillPoints} |
-    Stat Points: ${p.statPoints}
+    Stat Points: ${p.statPoints} |
+    Fame: ${p.fame}
     </p>
     
     <hr />
