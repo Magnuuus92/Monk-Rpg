@@ -52,9 +52,9 @@ function renderCounterProgress() {
         physLabour: "Physical Labour",
         broadMind: "Broadening Mind",
         becomeFlex: "Becoming Flexible",
-        hernessPow: "Harnessing Power",
+        harnessPow: "Harnessing Power",
     };
-    return Object.entries(playerState.counters).map(([key])=> {
+    return Object.entries(playerState.counters).map(([key, value])=> {
         const thresholds = COUNTER_THRESHOLDS[key] || [];
         const next = thresholds.find(t => !playerState.claimedThresholds[key].includes(t.at));
         const nextText = next ? `Next reward at ${next.at}` : "All rewards claimed";
