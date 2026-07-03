@@ -105,13 +105,16 @@ function confirmPlayerName() {
 }
 function checkTest() {
   const p = playerState;
-  if(p.nameSet = true && p.name === "test") {
+  console.log(p)
+  if(p.nameSet === true && p.name === "test") {
     p.skillPoints += 50;
     p.statPoints += 50;
     p.gold += 5000;
     p.resources += 5000;
-  } return;
+  } 
+  
 }
+
 // CHECK LVLUP
 function checkLevelUp() {
   while (playerState.experience >= playerState.level * 100) {
