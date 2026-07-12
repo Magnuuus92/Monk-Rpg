@@ -115,13 +115,22 @@ if(result.ok){
     } else {
         log(`Save failed: ${result.data.error || "Server error."}`);
     }
+    render();
 }
 //auto save at endDay
-function autoSave() {
-  saveGame("autosave");
+async function autoSave() {
+ if(!isLoggedIn()) return;
+
+ const body = {
+      stateJson: serializeState(),
+    day: playerState.day,
+    level: playerState.level,
+    characterName: playerState.name || "Hero",
+ };
+ await apiCall("POST", "/saves/autosave", body).catch(()=> {});
 }
 
-//LOAD
+//LOAD hereiam
 function loadGame(slotKey) {
   const raw = localStorage.getItem(`gameproject_${slotKey}`);
   if (!raw) {
