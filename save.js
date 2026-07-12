@@ -130,47 +130,55 @@ async function autoSave() {
  await apiCall("POST", "/saves/autosave", body).catch(()=> {});
 }
 
-//LOAD hereiam
-function loadGame(slotKey) {
-  const raw = localStorage.getItem(`gameproject_${slotKey}`);
-  if (!raw) {
-    log(`no save found in ${slotKey}.`);
+//LOAD 
+async function loadGame(slot) {
+ 
+  if (!isLoggedIn) {
+    log("You are not logged in. Log in to load.");
     render();
     return;
   }
-  try {
-    const saveData = JSON.parse(raw);
-    deserializeState(saveData.state);
-    log(
-      `Loaded save from ${slotKey === "autosave" ? "auto-save" : slotKey} - Day ${saveData.day}, Level ${saveData.level}.`,
-    );
-    //spawn at base when loading
-    currentScreen = "base";
-    playerState.combat = null;
-    render();
-  } catch (e) {
-    log("Load failed. Save data may be corrupted.");
-    console.error("Load error:", e);
-  }
-}
-// DELETE SAVEDATA FROM SLOT
-function deleteSave(slotKey) {
-  localStorage.removeItem(`gameproject_${slotKey}`);
-  log(`${slotKey} deleted.`);
+const result = await apiCall("GET", `/saves${slot}`);
+
+if (result.ok)
+{
+  deserializeState(result.data.stateJson);
+  currentScreen = "base";
+  playerState.combat = null;
+  log(`Loaded from ${slot === "autosave" ? "auto-save" : slot}.`);
+  render();
+} else{
+  log(`Load failed: ${result.data.error || "No save found."}`);
   render();
 }
-//READ SLOT INFO
-function getSlotInfo(slotKey) {
-  const raw = localStorage.getItem(`gameproject_${slotKey}`);
-  if (!raw) return null;
-  try {
-    const data = JSON.parse(raw);
-    return {
-      day: data.day,
-      level: data.level,
-      timestamp: data.timestamp,
-    };
-  } catch (e) {
-    return null;
+}
+// DELETE SAVEDATA FROM SLOT
+async function deleteSave(slot) {
+  if(!isLoggedIn()) return;
+  const result = await apiCall("DELETE", `/saves${slot}`);
+  if(result.ok){
+    log(`${slot} deleted.`);
+  }else{
+    log(`Delete failed: ${result.data.error || "server error."}`);
   }
+  render();
+}
+
+//READ SLOT INFO
+let cachedSlotInfo = null;
+async function fetchSlotInfo(slot) {
+if (!isLoggedIn()){
+  cachedSlotInfo = null;
+  return;
+}
+const result = await apiCall("GET", "/saves");
+if(result.ok) {
+  cachedSlotInfo = result.data;
+}else{
+  cachedSlotInfo = null;
+}
+}
+async function getSlotInfo(slot) {
+  if(!cachedSlotInfo) return null;
+  return cachedSlotInfo.find(s => s.slot && s.hasData) || null;
 }
