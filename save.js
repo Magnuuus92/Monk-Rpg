@@ -22,24 +22,67 @@ async function apiCall(method, path, body = null) {
   const headers = {
     "Content-Type": "application/json",
   };
-  const token //hereiam
-}
+  const token = getToken();
+  if(token){
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  const options = {
+    method,
+    headers,
+  };
+  if (body !== null){
+    options.body = JSON.stringify(body);
+  }
+  const response = await fetch(`${API_URL}${path}`, options);
+  const data = await response.json().catch(() =>({}));
 
+  return {ok: response.ok, status: response.status, data};
+}
+async function registerUser(username, password) {
+  const result = await apiCall("POST", "/auth/register", {username, password});
+
+  if(result.ok){
+    storeAuth(result.data.token, result.data.username);
+    log(`Welcome, ${result.data.username}! Account created.`);
+    currentScreen = "base";
+    render();
+  }else{
+      log(`Registration failed: ${result.data.error || "Unknown error."}`);
+        render();
+  }
+}
+async function loginUser(username, password){
+  const result = await apiCall("POST", "/auth/login", {username, password});
+
+  if(result.ok){
+    storeAuth(result.data.token, result.data.username);
+    log(`Welcome back, ${result.data.username}!`);
+    currentScreen = "base";
+    render();
+
+  }else {
+            log(`Login failed: ${result.data.error || "Invalid credentials."}`);
+        render();
+  }
+}
+function logoutUser() {
+clearAuth();
+log("Logged out.");
+currentScreen = "saveLoad";
+render();
+}
 
 //prepare player state for saving - strip all functions.
 function serializeState() {
-  const state = JSON.parse(
-    JSON.stringify(playerState, (key, value) => {
+ return JSON.stringify(playerState, (key, value) => {
       // strip functions
       if (typeof value === "function") return undefined;
       return value;
-    }),
-  );
-  return state;
+    });
 }
 //rebuild playerstate from loaded save
-function deserializeState(saved) {
-  // restore scalar values
+function deserializeState(stateJson) {
+  const saved =JSON.parse(stateJson);
   Object.assign(playerState, saved);
   //reattach isAlive() to any active combatants. (Might be useful down the line, if save during combat implemented)
   if (playerState.combat && playerState.combat.enemies) {
@@ -53,20 +96,25 @@ function deserializeState(saved) {
 
 //SAVE
 //save to slot1,2,3 or autosave
-function saveGame(slotKey) {
-  const saveData = {
-    state: serializeState(),
-    timestamp: new Date().toLocaleString(),
+function saveGame(slot) {
+  if(!isLoggedIn()){
+    log("You need to be logged in to save.");
+    render();
+    return;
+  }
+  const body = {
+    stateJson: serializeState(),
+    //timestamp: new Date().toLocaleString(), UNSURE remove
     day: playerState.day,
     level: playerState.level,
+    characterName: playerState.name || "Hero",
   };
-  try {
-    localStorage.setItem(`gameproject_${slotKey}`, JSON.stringify(saveData));
-    log(`Game saved to ${slotKey === "autosave" ? "auto-save" : slotKey}.`);
-  } catch (e) {
-    log("Save failed - storage may be full.");
-    console.error("Save error:", e);
-  }
+const result = await apiCall("POST", `/saves${slot}`, body);
+if(result.ok){
+        log(`Saved to ${slot === "autosave" ? "auto-save" : slot}.`);
+    } else {
+        log(`Save failed: ${result.data.error || "Server error."}`);
+    }
 }
 //auto save at endDay
 function autoSave() {
