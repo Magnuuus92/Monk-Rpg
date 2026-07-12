@@ -1,3 +1,31 @@
+const API_URL = "placehodlder";
+
+function getToken(){
+  return localStorage.getItem("gameproject_token");
+}
+function isLoggedIn(){
+  return getToken() !== null;
+}
+function getStoredUsername(){
+  return localStorage.getItem("gameproject_username") || "";
+}
+function storeAuth(token, username){
+  localStorage.setItem("gameproject_token", token);
+  localStorage.setItem("gameproject_token", username);
+}
+function clearAuth(){
+    localStorage.removeItem("gameproject_token");
+  localStorage.removeItem("gameproject_token");
+}
+//API helper
+async function apiCall(method, path, body = null) {
+  const headers = {
+    "Content-Type": "application/json",
+  };
+  const token //hereiam
+}
+
+
 //prepare player state for saving - strip all functions.
 function serializeState() {
   const state = JSON.parse(
