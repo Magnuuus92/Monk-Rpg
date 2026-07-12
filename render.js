@@ -114,7 +114,7 @@ function renderBaseActions() {
   Skill Tree (SP: ${playerState.skillPoints})
   </button>
   <button onclick="currentScreen = 'stats'; render();">Stats</button>
-  <button onclick="currentScreen = 'saveLoad'; render();">Save / Load</button> 
+  <button onclick="openSaveLoad()">Save / Load</button> 
   <button onclick="fightTestDummy()">Fight test dummy</button>
   ${playerState.shopPurchases.scrollBought && playerState.shopPurchases.scrollReadsUsed < 10
     ? `<button onclick="readScroll()">Read scroll <small>(${playerState.shopPurchases.scrollReadsUsed}/10)</small></button>`
