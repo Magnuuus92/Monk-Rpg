@@ -1,4 +1,4 @@
-const API_URL = "placehodlder";
+const API_URL = "https://gameserver-production-4761.up.railway.app/";
 
 function getToken(){
   return localStorage.getItem("gameproject_token");
