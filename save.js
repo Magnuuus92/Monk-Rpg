@@ -133,12 +133,12 @@ async function autoSave() {
 //LOAD 
 async function loadGame(slot) {
  
-  if (!isLoggedIn) {
+  if (!isLoggedIn()) {
     log("You are not logged in. Log in to load.");
     render();
     return;
   }
-const result = await apiCall("GET", `/saves${slot}`);
+const result = await apiCall("GET", `/saves/${slot}`);
 
 if (result.ok)
 {
@@ -155,7 +155,7 @@ if (result.ok)
 // DELETE SAVEDATA FROM SLOT
 async function deleteSave(slot) {
   if(!isLoggedIn()) return;
-  const result = await apiCall("DELETE", `/saves${slot}`);
+  const result = await apiCall("DELETE", `/saves/${slot}`);
   if(result.ok){
     log(`${slot} deleted.`);
   }else{
