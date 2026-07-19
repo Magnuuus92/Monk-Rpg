@@ -166,7 +166,7 @@ async function deleteSave(slot) {
 
 //READ SLOT INFO
 let cachedSlotInfo = null;
-async function fetchSlotInfo(slot) {
+async function fetchSlotInfo() {
 if (!isLoggedIn()){
   cachedSlotInfo = null;
   return;
