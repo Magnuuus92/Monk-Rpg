@@ -11,7 +11,7 @@ function getStoredUsername(){
 }
 function storeAuth(token, username){
   localStorage.setItem("gameproject_token", token);
-  localStorage.setItem("gameproject_token", username);
+  localStorage.setItem("gameproject_username", username);
 }
 function clearAuth(){
     localStorage.removeItem("gameproject_token");
