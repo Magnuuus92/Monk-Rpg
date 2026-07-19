@@ -109,7 +109,7 @@ async function saveGame(slot) {
     level: playerState.level,
     characterName: playerState.name || "Hero",
   };
-const result = await apiCall("POST", `/saves${slot}`, body);
+const result = await apiCall("POST", `/saves/${slot}`, body);
 if(result.ok){
         log(`Saved to ${slot === "autosave" ? "auto-save" : slot}.`);
     } else {
