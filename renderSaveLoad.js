@@ -1,6 +1,11 @@
 function renderSaveLoad() {
   const app = document.getElementById("app");
 
+  if(!isLoggedIn()){
+    renderAuth();
+    return;
+  }
+
   const slots = ["slot1", "slot2", "slot3"];
   const autoInfo = getSlotInfo("autosave");
 
