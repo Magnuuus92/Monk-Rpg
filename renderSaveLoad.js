@@ -17,7 +17,7 @@ function renderSaveLoad() {
     <strong>${slot}</strong> -
     ${
       info
-        ? `Day ${info.day} | Level ${info.level} | ${info.timestamp}`
+        ? ` ${info.characterName} | Day ${info.day} | Level ${info.level} | ${info.savedAt}`
         : "<em> Empty </em>"
     }
     <br/>
@@ -30,6 +30,9 @@ function renderSaveLoad() {
     .join("");
   app.innerHTML = `
   <h1> GAMEPROJECT - Save / Load</h1>
+  <p> Logged in as <strong>${getStoredUsername()}</strong>
+  <button onclick="logOutUser()">Log out</button>
+  </p>
   <button onclick="currentScreen = 'base'; render();">Back to base</button>
   <hr />
   
@@ -41,10 +44,10 @@ function renderSaveLoad() {
   <div class="save-slot">
   ${
     autoInfo
-      ? `Day ${autoInfo.day} | Lvl ${autoInfo.level} | ${autoInfo.timestamp}
+      ? `${autoInfo.characterName} | Day ${autoInfo.day} | Lvl ${autoInfo.level} | ${autoInfo.savedAt}
     <br/>
-    <button onclick="loadGame('autoSave')">Load Auto-Save</button>
-    <button onclick="deleteSave('autoSave'); render();">Delete Auto-save</button>`
+    <button onclick="loadGame('autosave')">Load Auto-Save</button>
+    <button onclick="deleteSave('autosave'); render();">Delete Auto-save</button>`
       : "<em>Empty..</em>"
   }
   </div>
