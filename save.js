@@ -15,7 +15,7 @@ function storeAuth(token, username){
 }
 function clearAuth(){
     localStorage.removeItem("gameproject_token");
-  localStorage.removeItem("gameproject_token");
+  localStorage.removeItem("gameproject_username");
 }
 //API helper
 async function apiCall(method, path, body = null) {
