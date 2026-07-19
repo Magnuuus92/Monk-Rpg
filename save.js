@@ -23,7 +23,7 @@ async function apiCall(method, path, body = null) {
     "Content-Type": "application/json",
   };
   const token = getToken();
-  if(token){
+  if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
   const options = {
