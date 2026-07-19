@@ -96,7 +96,7 @@ function deserializeState(stateJson) {
 
 //SAVE
 //save to slot1,2,3 or autosave
-function saveGame(slot) {
+async function saveGame(slot) {
   if(!isLoggedIn()){
     log("You need to be logged in to save.");
     render();
