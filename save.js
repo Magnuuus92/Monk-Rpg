@@ -180,5 +180,5 @@ if(result.ok) {
 }
 function getSlotInfo(slot) {
   if(!cachedSlotInfo) return null;
-  return cachedSlotInfo.find(s => s.slot && s.hasData) || null;
+  return cachedSlotInfo.find(s => s.slot === slot && s.hasData) || null;
 }
