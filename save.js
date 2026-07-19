@@ -178,7 +178,7 @@ if(result.ok) {
   cachedSlotInfo = null;
 }
 }
-async function getSlotInfo(slot) {
+function getSlotInfo(slot) {
   if(!cachedSlotInfo) return null;
   return cachedSlotInfo.find(s => s.slot && s.hasData) || null;
 }
