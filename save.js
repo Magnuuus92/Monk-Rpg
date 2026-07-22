@@ -115,7 +115,7 @@ if(result.ok){
     } else {
         log(`Save failed: ${result.data.error || "Server error."}`);
     }
-    fetchSlotInfo();
+    await fetchSlotInfo();
     render();
 }
 //auto save at endDay
