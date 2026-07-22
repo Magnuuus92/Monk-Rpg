@@ -52,7 +52,7 @@ const SKILL_DATA = {
       stats.strength += 4;
       stats.dexterity += 4;
       stats.vitality += 4;
-      stats.vitality += 4;
+      stats.resilience += 4;
       stats.willpower += 4;
       stats.intellect += 4;
       // recalculate stats
