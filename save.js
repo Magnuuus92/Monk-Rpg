@@ -162,6 +162,7 @@ async function deleteSave(slot) {
   }else{
     log(`Delete failed: ${result.data.error || "server error."}`);
   }
+  await fetchSlotInfo();
   render();
 }
 
