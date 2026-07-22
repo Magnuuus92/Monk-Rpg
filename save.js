@@ -65,7 +65,7 @@ async function loginUser(username, password){
         render();
   }
 }
-function logoutUser() {
+function logOutUser() {
 clearAuth();
 log("Logged out.");
 currentScreen = "saveLoad";
