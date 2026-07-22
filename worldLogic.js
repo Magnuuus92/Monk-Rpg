@@ -417,6 +417,13 @@ function buyResource(){
   //log(`Bought 1 resource for ${cost} gold.`) This floods the log.
   render();
 }
+function buyResource10(){
+    const cost = 50;
+  if(playerState.gold < cost) {log("Not enough gold."); render(); return;}
+  playerState.gold -= cost;
+  playerState.resources += 10;
+  render();
+}
 function buyPendant(){
   if(playerState.shopPurchases.pendantBought){log("Already Purchased."); return;}
   const cost = 30;

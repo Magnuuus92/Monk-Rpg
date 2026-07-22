@@ -420,6 +420,7 @@ function renderMerchantShop(){
   <h3>Old Merchants Wares</h3>
   <div class="upgrade-row">
   <button onclick="buyResource()">Buy 1 resource <small>(5 gold)</small></button>
+  <button onclick="buyResource10()">Buy 10 resource <small>(50 gold)</small></button>
   </div>
   <div class="upgrade-row">
   <strong>Prendant</strong> ${p.shopPurchases.pendantBought ? "<small>Purchased</small>" : ""}</br>
