@@ -99,7 +99,7 @@ function confirmPlayerName() {
   const name = input.value.trim();
   playerState.name = name.length > 0 ? name : "Hero";
   playerState.nameSet = true;
-  log(`Welcome, ${playerState.name}.`);
+  log(`Your character name is ${playerState.name}.`);
   checkTest();
   render();
 }
